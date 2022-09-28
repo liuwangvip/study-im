@@ -1,0 +1,81 @@
+/* 清除浏览器默认样式*/
+body {
+    font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #304455;
+    background-color: #fff;
+    margin: 0;
+}
+
+#app {
+    height: 100%;
+    width: 100%;
+}
+
+#app > .el-container {
+    height: 100vh;
+
+}
+
+.el-header {
+    background-color: #475050;
+    color: #333;
+    text-align: center;
+    line-height: 60px;
+}
+
+.el-main {
+    text-align: center;
+    line-height: 160px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0px !important;
+}
+
+.el-main .fd-content-bg {
+    height: 100%;
+    flex-shrink: 0;
+    flex-grow: 1;
+    background-image: url("../../img/bg.jpg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.el-main .fd-content {
+    margin-right: 50px;
+    padding: 20px 20px 20px 0px;
+    width: 450px;
+    background-color: #ecf0f3;
+    box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #f9f9f9;
+}
+
+.el-main .fd-content .fd-content-head {
+    height: 200px;
+    background-image: url("../../img/head.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.el-footer {
+    background-color: #475050;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 60px;
+}
+
+.el-footer .copy-right {
+    margin: 0px;
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/common/element/elementUI.css}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app" class="main-box">
+    <div :class="['container', 'container-register', { 'is-txl': isLogin }]">
+        <form>
+            <h2 class="title">Create Account</h2>
+            <span class="text">or use email for registration</span>
+            <input class="form__input" type="text" placeholder="Name"/>
+            <input class="form__input" type="password" placeholder="Password"/>
+            <div class="primary-btn">立即注册</div>
+        </form>
+    </div>
+    <div
+            :class="['container', 'container-login', { 'is-txl is-z200': isLogin }]"
+    >
+        <form>
+            <h2 class="title">Sign in to Website</h2>
+            <span class="text">or use email for registration</span>
+            <input class="form__input" type="password" placeholder="Password"/>
+            <input class="form__input" type="text" placeholder="Email"/>
+            <div class="primary-btn">立即登录</div>
+        </form>
+    </div>
+    <div :class="['switch', { login: isLogin }]">
+        <div class="switch__circle"></div>
+        <div class="switch__circle switch__circle_top"></div>
+        <div class="switch__container">
+            <h2>{{ isLogin ? 'Hello Friend !' : 'Welcome Back !' }}</h2>
+            <p>
+                {{
+                isLogin
+                ? 'Enter your personal details and start journey with us'
+                : 'To keep connected with us please login with your personal info'
+                }}
+            </p>
+            <div class="primary-btn" @click="isLogin = !isLogin">
+                {{ isLogin ? '立即注册' : '立即登录' }}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- import Vue before Element -->
+<script src="js/common/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="js/common/element/elementUI.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

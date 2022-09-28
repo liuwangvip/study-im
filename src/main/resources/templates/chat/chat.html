@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>WeChat</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="css/element/element.css">
+    <link rel="stylesheet" href="css/chat/chat.css"/>
+
+</head>
+<body>
+<div id="app">
+    <noscript>
+        <h2>Sorry! Your browser doesn't support Javascript</h2>
+    </noscript>
+
+
+    <div class="username-page-container" v-show="showUser">
+        <el-form :model="userNameForm" :rules="rules" ref="userNameForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="昵称：" prop="name">
+                <el-input v-model="userNameForm.username" placeholder="请输入姓名"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" style="background-color: #ff4743;color: #fff;border-color:#ff4743; "
+                           @click="startChat('userNameForm')">进入聊天室
+                </el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+
+
+    <!--        <div id="username-page" v-show="showUser">-->
+    <!--            <div class="username-page-container">-->
+    <!--                <h1 class="title">Type your username</h1>-->
+    <!--                <form id="usernameForm" name="usernameForm">-->
+    <!--                    <div class="form-group">-->
+    <!--                        <input type="text" id="name" v-model="username" placeholder="Username" autocomplete="off"-->
+    <!--                               class="form-control"/>-->
+    <!--                    </div>-->
+    <!--                    <div class="form-group">-->
+    <!--                        <button type="submit" @click="startChat" class="accent username-submit">Start Chatting</button>-->
+    <!--                    </div>-->
+    <!--                </form>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+    <div id="chat-page" v-show="!showUser">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>群聊</h2>
+            </div>
+            <div class="connecting" v-show="connected">
+                Connecting...
+            </div>
+            <ul id="messageArea">
+                <template v-for="(message,index) in messageList">
+
+                    <li class="event-message" v-if="message.type == 'JOIN'">
+                        <p>liuwang joined!</p>
+                    </li>
+                    <li class="event-message" v-else-if="message.type == 'LEAVE'">
+                        <p> left!</p>
+                    </li>
+                    <li class="chat-message">
+                        <i style="background-color: rgb(255, 86, 82);">l</i>
+                        <span>{{username}}</span>
+                        <p>你好</p>
+                    </li>
+                </template>
+                <li class="chat-message">
+                    <i style="background-color: rgb(255, 86, 82);">l</i>
+                    <span>liuwang</span>
+                    <p>你好</p>
+                </li>
+            </ul>
+            <form id="messageForm" name="messageForm" nameForm="messageForm">
+                <div class="form-group">
+                    <div class="input-group clearfix">
+                        <input type="text" id="message" placeholder="请输入消息" autocomplete="off" class="form-control"/>
+                        <button type="submit" class="primary">发送</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="js/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="js/element/element.js"></script>
+<script src="js/websocket/sockjs.min.js"></script>
+<script src="js/websocket/stomp.min.js"></script>
+<script src="js/chat/chat.js"></script>
+</html>

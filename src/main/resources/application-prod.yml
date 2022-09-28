@@ -1,0 +1,13 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    dynamic:
+      primary: master
+      datasource:
+        master:
+          password: 123456
+          username: sa
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://127.0.0.1:5432/isoler
+      lazy: true
