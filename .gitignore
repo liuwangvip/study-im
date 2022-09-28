@@ -30,3 +30,7 @@ build/
 ### VS Code ###
 .vscode/
 logs/
+/application.pid
+.mvn/
+mvnw
+mvnw.cmd
