@@ -49,7 +49,7 @@ body {
     height: 100%;
     flex-shrink: 0;
     flex-grow: 1;
-    background-image: url("../../img/bg.jpg");
+    background-image: url("../../img/login/bg.jpg");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center center;
@@ -65,7 +65,7 @@ body {
 
 .el-main .fd-content .fd-content-head {
     height: 200px;
-    background-image: url("../../img/head.png");
+    background-image: url("../../img/login/head.png");
     background-repeat: no-repeat;
     background-position: center center;
 }

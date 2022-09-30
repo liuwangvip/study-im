@@ -11,11 +11,9 @@
 <body>
 <div id="app">
     <noscript>
-        <h2>Sorry! Your browser doesn't support Javascript</h2>
+        <h2>抱歉，您的浏览器不支持websocket,请升级浏览器版本</h2>
     </noscript>
-
-
-    <div class="username-page-container" v-show="false">
+    <div class="fd-user-page-container" v-show="showUser">
         <el-form :model="userInfo" :rules="rules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="昵称：" prop="name">
                 <el-input v-model="userInfo.username" placeholder="请输入姓名"></el-input>
@@ -29,61 +27,118 @@
     </div>
 
     <el-container>
-        <el-header class="fd-head">
+        <el-header class="fd-head" height="40px">
             <div class="fd-head-title">
                 IM
             </div>
             <div class="fd-head-tail">
-                <div style="padding-top: 20px;cursor:pointer;">
-                    <img src="img/login.png" title="登录" @click="login"></img>
+                <div style="padding-top:12px;cursor:pointer;">
+                    <img src="img/chat/login.png" title="登录" @click="login"></img>
                 </div>
-                <div style="padding-top: 20px;cursor:pointer;">
-                    <img src="img/logout.png" title="注销" @click="logout"></img>
+                <div style="padding-top:12px;cursor:pointer;">
+                    <img src="img/chat/logout.png" title="注销" @click="logout"></img>
                 </div>
             </div>
-
         </el-header>
         <el-container>
             <el-aside class="fd-left-nav" width="auto">
                 <div class="fd-nav-container">
-                    <el-row class="fd-nav-container-item">
+                    <el-row class="fd-nav-container-item" @click.native="changeNav('chatRoom')">
                         <el-badge :value="200" :max="99" class="item">
-                            <el-button type="info" icon="el-icon-chat-round" circle></el-button>
+                            <el-button :class="{active:navType == 'chatRoom'}" type="info" icon="el-icon-chat-round"
+                                       circle></el-button>
                         </el-badge>
                     </el-row>
-                    <el-row class="fd-nav-container-item">
-                        <el-button type="info" icon="el-icon-user" circle></el-button>
+                    <el-row class="fd-nav-container-item" @click.native="changeNav('userList')">
+                        <el-button :class="{active:navType == 'userList'}" type="info" icon="el-icon-user"
+                                   circle></el-button>
                     </el-row>
-                    <el-row class="fd-nav-container-item">
-                        <el-button type="info" icon="el-icon-setting" circle></el-button>
+                    <el-row class="fd-nav-container-item" @click.native="openSetting">
+                        <el-button :class="{active:navType == 'openSetting'}" type="info" icon="el-icon-setting"
+                                   circle></el-button>
                     </el-row>
                 </div>
             </el-aside>
             <el-container>
-                <el-aside class="fd-left-ul" width="200px">
+                <el-aside v-if="navType=='chatRoom'" class="fd-left-ul" width="200px">
                     <div class="fd-left-ul-tool">
-                        <div style="width: 150px;padding-left: 10px">
-                            <el-input @keyup.enter.native="search" size="mini" prefix-icon="el-icon-search"
-                                      placeholder="搜索" v-model="searchText"
+                        <div class="fd-left-ul-tool-search">
+                            <el-input @keyup.enter.native="searchChatRoom" size="mini" prefix-icon="el-icon-search"
+                                      placeholder="搜索" v-model="searchChatRoomText"
                                       class="input-with-select">
                             </el-input>
                         </div>
-                        <div style="padding-left: 20px;padding-right: 5px;cursor:pointer;">
-                            <i class="el-icon-plus" @click="add"></i>
+                        <div @click="addChatRoom" class="fd-left-ul-tool-add">
+                            <svg t="1664566369857" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="9969" width="32" height="32">
+                                <path d="M512 1255.489906" p-id="9970"></path>
+                                <path d="M781.15051 491.225265 534.207476 491.225265 534.207476 244.896262c0-12.38297-10.131521-22.514491-22.514491-22.514491s-22.514491 10.131521-22.514491 22.514491L489.178493 491.225265 242.84949 491.225265c-12.38297 0-22.821507 10.336198-22.821507 22.719168l0-0.102339c0 12.38297 10.438537 22.412153 22.821507 22.412153L489.178493 536.254247l0 246.943034c0 12.38297 10.131521 22.514491 22.514491 22.514491s22.514491-10.131521 22.514491-22.514491L534.207476 536.254247l246.943034 0c12.38297 0 22.207476-9.926844 22.207476-22.309814l0-0.102339C803.357985 501.459125 793.53348 491.225265 781.15051 491.225265z"
+                                      p-id="9971"></path>
+                            </svg>
                         </div>
                     </div>
-
-                    <div style="overflow: auto;margin-bottom: 20px">
+                    <div class="fd-left-main">
                         <div class="infinite-list-wrapper">
-                            <ul class="list" v-infinite-scroll="loadRoomList" infinite-scroll-disabled="disabled">
+                            <ul class="list" v-infinite-scroll="loadRoomList"
+                                infinite-scroll-disabled="disabled('chatRoom')">
                                 <template v-for="item in roomList">
                                     <div class="fd-left-ul-item">
-                                        {{item.name}}
+                                        <div>
+                                            <el-badge :value="200" :max="99" class="item">
+                                                <el-avatar style="line-height: 40px;" size="medium"
+                                                           :src="item.src" fit="none"></el-avatar>
+                                            </el-badge>
+                                        </div>
+                                        <div class="fd-left-ul-item-name">
+                                            {{item.name}}
+                                        </div>
                                     </div>
                                 </template>
                             </ul>
-                            <p v-if="loading">加载中...</p>
-                            <p v-if="noMore">分界线</p>
+                            <p v-if="loading.roomList">加载中...</p>
+                            <el-divider v-if="noMore('chatRoom')" content-position="center">我是有底线的</el-divider>
+                        </div>
+                    </div>
+                </el-aside>
+                <el-aside v-if="navType=='userList'" class="fd-left-ul" width="200px">
+                    <div class="fd-left-ul-tool">
+                        <div class="fd-left-ul-tool-search">
+                            <el-input @keyup.enter.native="searchUserList" size="mini" prefix-icon="el-icon-search"
+                                      placeholder="搜索" v-model="searchUserListText"
+                                      class="input-with-select">
+                            </el-input>
+                        </div>
+                        <div class="fd-left-ul-tool-add" @click="addUser">
+                            <svg t="1664566476448" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="10473" width="32" height="32">
+                                <path d="M702.7712 515.4304a360.8832 360.8832 0 0 0-155.7504-89.7536c51.2-32.2048 85.3504-89.1392 85.3504-153.9584 0-100.2496-81.5104-181.8112-181.76-181.8112-100.1984 0-181.76 81.5616-181.76 181.76 0 64.8192 34.1504 121.8048 85.3504 153.9584-152.32 42.3424-264.5504 182.1696-264.5504 347.8016 0 9.1648 0.3584 18.2272 1.024 27.2384 0.8192 10.6496 9.7792 18.8416 20.48 18.8416 11.8784 0 21.2992-10.0864 20.3776-21.9648-0.6144-7.9872-0.9216-16.0256-0.9216-24.1152 0-176.4352 143.5648-320 320-320 86.9376 0 165.8368 34.8672 223.5392 91.2896 3.8912 3.7888 9.0112 5.9904 14.4384 5.9904 18.4832 0 27.392-22.3744 14.1824-35.2768zM309.8112 271.6672c0-77.6192 63.1808-140.8 140.8-140.8s140.8 63.1808 140.8 140.8-63.1808 140.8-140.8 140.8-140.8-63.1808-140.8-140.8zM916.48 783.36h-307.2c-11.264 0-20.48-9.216-20.48-20.48s9.216-20.48 20.48-20.48h307.2c11.264 0 20.48 9.216 20.48 20.48s-9.216 20.48-20.48 20.48z"
+                                      fill="#666666" p-id="10474"></path>
+                                <path d="M742.4 916.48v-307.2c0-11.264 9.216-20.48 20.48-20.48s20.48 9.216 20.48 20.48v307.2c0 11.264-9.216 20.48-20.48 20.48s-20.48-9.216-20.48-20.48z"
+                                      fill="#666666" p-id="10475"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="fd-left-main">
+                        <div class="infinite-list-wrapper">
+                            <ul class="list" v-infinite-scroll="loadUserList"
+                                infinite-scroll-disabled="disabled('userList')">
+                                <template v-for="item in userList">
+                                    <div class="fd-left-ul-item">
+                                        <div>
+                                            <el-badge :value="200" :max="99" class="item">
+                                                <el-avatar style="line-height: 40px;" size="medium"
+                                                           :src="item.src" fit="none"></el-avatar>
+                                            </el-badge>
+                                        </div>
+                                        <div class="fd-left-ul-item-name">
+                                            {{item.name}}
+                                        </div>
+                                    </div>
+                                </template>
+                            </ul>
+                            <p v-if="loading.userList">加载中...</p>
+                            <el-divider v-if="noMore('userList')" content-position="center">我是有底线的</el-divider>
                         </div>
                     </div>
                 </el-aside>
@@ -92,21 +147,23 @@
                         <div class="fd-chat-title">
                             群聊(22)
                         </div>
+                        <div class="fd-chat-more" @click="showMore">
+                            <svg t="1664568892984" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="12289" width="16" height="16">
+                                <path d="M197.844997 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM512 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM826.155003 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0Z"
+                                      p-id="12290"></path>
+                            </svg>
+                        </div>
+                        <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false">
+                            <span>我来啦!</span>
+                        </el-drawer>
                     </el-header>
-                    <el-main>
-                        <div class="fd-chat-main">
+                    <el-main class="fd-chat-main-container" style="margin-bottom: 20px">
+                        <div class="fd-chat-main" ref="fd_chat_main">
                             <div class="fd-chat-content-item" v-for="(message,index) in messageList">
-                                <div class="fd-chat-notice" v-if="message.type == 'JOIN'">
+                                <div class="fd-chat-notice" v-if="message.type == 'NOTICE'">
                                     <div class="chat-notice-text">
-                                        <span>{{message.sender}}</span>
-                                        <span>上线</span>
-                                        <span style="padding-left: 5px">{{message.date}}</span>
-                                    </div>
-                                </div>
-                                <div class="fd-chat-notice" v-else-if="message.type == 'LEAVE'">
-                                    <div class="chat-notice-text">
-                                        <span>{{message.sender}}</span>
-                                        <span>下线</span>
+                                        <span>{{message.content}}</span>
                                         <span style="padding-left: 5px">{{message.date}}</span>
                                     </div>
                                 </div>
@@ -116,31 +173,85 @@
                                     </div>
                                     <div class="fd-chat-message-content">
                                         <div class="fd-chat-message-content-xm">
-                                            {{message.sender}}
+                                            <span>{{message.sender}}</span>
+                                            <span class="fd-chat-message-content-date">{{message.date}}</span>
                                         </div>
                                         <div class="fd-chat-message-content-text">
                                             {{message.content}}
                                         </div>
                                     </div>
                                 </div>
-                                <!--                                <li class="event-message" v-if="message.type == 'JOIN'">-->
-                                <!--                                    <p>{{message.sender+'上线'}}</p>-->
-                                <!--                                </li>-->
-                                <!--                                <li class="event-message" v-else-if="message.type == 'LEAVE'">-->
-                                <!--                                    <p> {{message.sender+'下线'}}</p>-->
-                                <!--                                </li>-->
-                                <!--                                <li class="chat-message" v-else>-->
-                                <!--                                    <i :style="message.style">{{message.sender[0]}}</i>-->
-                                <!--                                    <span>{{message.sender}}</span>-->
-                                <!--                                    <p>{{message.content}}</p>-->
-                                <!--                                </li>-->
                             </div>
                         </div>
                     </el-main>
-                    <el-footer class="fd-chat-footer" height="120">
+                    <el-footer class="fd-chat-footer" height="160">
                         <div class="fd-chat-footer-send">
+                            <div class="fd-chat-footer-send-tool">
+                                <div class="fd-chat-footer-send-tool-left">
+                                    <el-tooltip @click.native="openEmo" class="item fd-tool-item" effect="dark"
+                                                content="表情"
+                                                placement="bottom-end">
+                                        <svg t="1664527795297" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="2391" width="16" height="16">
+                                            <path d="M942.577061 507.011382c0-237.637282-192.632275-430.269557-430.269557-430.269557s-430.269557 192.632275-430.269557 430.269557c0 237.647515 192.632275 430.27979 430.269557 430.27979 97.553827 0 186.878225-33.189913 259.055081-87.88563 2.964518-3.363607 4.91187-7.655354 4.91187-12.479219 0-10.531867-8.541537-19.073404-19.072381-19.073404-5.465478 0-10.334369 2.168386-13.808494 5.842055l-0.242524 0c-64.584947 47.526433-144.086629 75.981509-230.422973 75.981509-215.179804 0-389.645324-174.489056-389.645324-389.656581 0-215.201294 174.466544-389.644301 389.645324-389.644301 215.202317 0 389.645324 174.443008 389.645324 389.644301 0 65.738213-15.423271 127.60219-44.186362 181.922353l0 0.321318c-0.533143 1.814322-1.108241 3.583618-1.108241 5.53097 0 10.531867 8.541537 19.073404 19.073404 19.073404 8.207939 0 15.06716-5.265934 17.745153-12.523221l0 0.13303C924.544359 645.279493 942.577061 578.258053 942.577061 507.011382zM399.574976 391.378805c0-24.028253-19.47147-43.499723-43.500746-43.499723-24.029276 0-43.478234 19.47147-43.478234 43.499723 0 24.029276 19.448958 43.479257 43.478234 43.479257C380.102483 434.858062 399.574976 415.408081 399.574976 391.378805zM669.735999 347.945597c-24.004717 0-43.476187 19.448958-43.476187 43.478234 0 24.029276 19.47147 43.500746 43.476187 43.500746 24.029276 0 43.50177-19.47147 43.50177-43.500746C713.237769 367.394554 693.766298 347.945597 669.735999 347.945597zM702.196295 630.742405c0-11.793604-9.558703-21.330818-21.350261-21.330818-1.88186 0-3.562129 0.620124-5.335519 1.084705l-0.441045 0c-49.473785 22.723537-104.548124 38.610366-162.562423 38.610366-57.130162 0-111.007233-16.130376-159.907966-38.233789l-0.177032 0c-2.300392-0.818645-4.690836-1.461281-7.2798-1.461281-11.880585 0-21.505803 9.602705-21.505803 21.485337 0 8.120958 4.513804 15.222703 11.129478 18.872836 54.209646 24.6494 113.883747 42.980907 177.319521 42.980907 63.037708 0 124.240629-18.686594 178.185238-43.046399 0.308015-0.149403 0.217964-0.11154 0.070608-0.045025C696.59574 645.928269 702.196295 638.545114 702.196295 630.742405z"
+                                                  p-id="2392" data-spm-anchor-id="a313x.7781069.0.i5"
+                                                  class="selected"></path>
+                                        </svg>
+                                    </el-tooltip>
+                                    <el-tooltip @click.native="openFile" class="item fd-tool-item" effect="dark"
+                                                content="文件"
+                                                placement="bottom-end">
+                                        <svg t="1664529323175" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="4344" width="16" height="16">
+                                            <path d="M418.133333 298.666667l-42.666666-42.666667H213.333333v512h640V298.666667H418.133333zM896 298.666667v512H170.666667V213.333333h226.133333l42.666667 42.666667H896v42.666667z m-298.666667 341.333333h170.666667v42.666667h-170.666667v-42.666667z"
+                                                  fill="#444444" p-id="4345"></path>
+                                        </svg>
+                                    </el-tooltip>
+                                    <el-tooltip @click.native="openMsgHistory" class="item fd-tool-item" effect="dark"
+                                                content="消息历史"
+                                                placement="bottom-end">
+                                        <svg t="1664529379262" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="6150" width="16" height="16">
+                                            <path d="M194.169281 885.625466l18.299785-24.463158c0.076748-0.103354 7.974625-10.705829 15.189957-23.139 10.130731-17.45658 11.249205-25.151843 11.281951-27.565822-56.273654-33.619702-102.995769-77.82039-135.179772-127.902018-33.725102-52.481282-51.551096-111.715361-51.551096-171.297364 0-50.523697 12.299117-99.509365 36.555567-145.594983 23.318078-44.301995 56.643068-84.044138 99.048877-118.121258 86.703711-69.674872 201.834868-108.046808 324.183404-108.046808 122.348536 0 237.478669 38.371936 324.183404 108.046808 42.405809 34.07712 75.731822 73.819263 99.0499 118.121258 24.25645 46.085618 36.556591 95.071286 36.556591 145.594983 0 50.52472-12.300141 99.509365-36.556591 145.594983-23.318078 44.301995-56.644091 84.044138-99.0499 118.122281-86.703711 69.675896-201.834868 108.047832-324.183404 108.047832-53.883211 0-106.651019-7.458879-156.840094-22.168905-0.055259-0.016373-1.485841-0.402159-5.916756-0.402159-32.155351 0-124.222209 18.835997-125.147278 19.026332L194.169281 885.625466zM349.243149 837.245595c5.372358 0 9.327436 0.425695 12.443403 1.339508 48.067762 14.08888 98.640578 21.231557 150.313447 21.231557 240.732783 0 436.583356-156.36221 436.583356-348.558557 0-192.195324-195.850573-348.558557-436.583356-348.558557s-436.583356 156.36221-436.583356 348.558557c0 109.7588 66.059532 214.44814 176.708608 280.041044 5.033643 2.983961 8.327666 7.739265 9.525957 13.754259 1.327228 6.658653 1.290389 18.59245-14.279215 45.233204-0.222057 0.379647-0.444115 0.756223-0.666172 1.131777C277.484825 845.63773 326.142012 837.245595 349.243149 837.245595z"
+                                                  p-id="6151"></path>
+                                            <path d="M337.301166 512m-33.767058 0a32.998 32.998 0 1 0 67.534116 0 32.998 32.998 0 1 0-67.534116 0Z"
+                                                  p-id="6152"></path>
+                                            <path d="M512 512m-33.767058 0a32.998 32.998 0 1 0 67.534116 0 32.998 32.998 0 1 0-67.534116 0Z"
+                                                  p-id="6153"></path>
+                                            <path d="M687.487803 512m-33.767058 0a32.998 32.998 0 1 0 67.534116 0 32.998 32.998 0 1 0-67.534116 0Z"
+                                                  p-id="6154"></path>
+                                        </svg>
+                                    </el-tooltip>
+                                </div>
+                                <div class="fd-chat-footer-send-tool-right">
+                                    <el-tooltip @click.native="openVoiceChat" class="item fd-tool-item" effect="dark"
+                                                content="语音聊天"
+                                                placement="bottom-end">
+                                        <svg t="1664557407127" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="3211" width="16" height="16">
+                                            <path d="M554.666667 768v85.333333h-42.666667v-85.333333c-136.533333-8.533333-243.2-119.466667-256-256h42.666667c12.8 119.466667 110.933333 213.333333 230.4 213.333333h4.266666c123.733333 0 221.866667-93.866667 230.4-213.333333h42.666667c-8.533333 136.533333-115.2 243.2-251.733333 256z m-21.333334-640C614.4 128 682.666667 196.266667 682.666667 277.333333v213.333334c0 81.066667-68.266667 149.333333-149.333334 149.333333S384 571.733333 384 490.666667v-213.333334C384 196.266667 448 128 533.333333 128z m0 42.666667C473.6 170.666667 426.666667 217.6 426.666667 277.333333v213.333334c0 59.733333 46.933333 106.666667 106.666666 106.666666s106.666667-46.933333 106.666667-106.666666v-213.333334C640 217.6 593.066667 170.666667 533.333333 170.666667z"
+                                                  fill="#444444" p-id="3212"></path>
+                                        </svg>
+                                    </el-tooltip>
+                                    <el-tooltip @click.native="openVideoChat" class="item fd-tool-item" effect="dark"
+                                                content="视频聊天"
+                                                placement="bottom-end">
+                                        <svg t="1664557527418" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="4227" width="16" height="16">
+                                            <path d="M783.397177 815.037804 99.259678 815.037804c-32.612769 0-59.144028-26.53433-59.144028-59.149145 0-0.13917 0.001023-0.277316 0.004093-0.416486l0.533143-23.604604c0.227174-10.028401 8.42795-18.004049 18.407232-18.004049 0.141216 0 0.282433 0.001023 0.424672 0.005117 10.17064 0.230244 18.228153 8.661264 17.998933 18.830881l-0.529049 23.370267c0.097214 12.218276 10.06524 22.128997 22.305005 22.128997l684.137499 0c12.301164 0 22.309098-10.007935 22.309098-22.310122l0-77.920674c0-5.936199 2.860141-11.508102 7.684006-14.9679 4.822842-3.459798 11.021008-4.38282 16.641005-2.479471l124.534318 42.147936c11.083429-1.287319 19.715017-10.732435 19.715017-22.155603L974.280622 378.76758c0-11.423167-8.631588-20.868283-19.715017-22.155603l-124.534318 42.148959c-5.623068 1.902326-11.81714 0.980327-16.641005-2.479471-4.823865-3.459798-7.684006-9.031701-7.684006-14.966876L805.706275 268.925892c0-12.299117-10.007935-22.305005-22.309098-22.305005L99.793844 246.620887c-12.300141 0-22.306029 10.005888-22.306029 22.305005L77.487815 587.012438c0.071631 4.729721 0.096191 57.173141-32.541137 96.333022-6.513344 7.812943-18.127869 8.868995-25.942859 2.356674-7.814989-6.513344-8.868995-18.127869-2.356674-25.942859 24.326035-29.186739 24.015973-71.721485 24.006763-72.143087-0.004093-0.145309-0.005117-0.290619-0.005117-0.436952L40.648792 268.925892c0-32.612769 26.532283-59.144028 59.145052-59.144028l683.603333 0c32.613792 0 59.148122 26.532283 59.148122 59.144028l0 86.707804 103.523795-35.038004c1.901303-0.64366 3.897773-0.972141 5.9055-0.972141 32.612769 0 59.145052 26.532283 59.145052 59.144028l0 301.745369c0 32.612769-26.532283 59.145052-59.145052 59.145052-2.007727 0-4.003174-0.328481-5.9055-0.972141l-103.523795-35.038004 0 52.241828C842.544275 788.503475 816.010969 815.037804 783.397177 815.037804z"
+                                                  p-id="4228"></path>
+                                            <path d="M404.872121 647.215588c-2.798742 0-5.610788-0.63752-8.211009-1.933025-6.253424-3.115967-10.205433-9.500375-10.205433-16.486486L386.455679 404.165016c0-6.886851 3.842515-13.199627 9.960863-16.362666 6.118348-3.164063 13.489222-2.64934 19.10922 1.334391L569.047274 497.943866c4.79419 3.397377 7.67889 8.878205 7.766894 14.753005s-2.632967 11.43954-7.323802 14.978133L415.968853 643.499963C412.710646 645.956921 408.804686 647.215588 404.872121 647.215588zM423.294702 439.796538l0 152.029532 103.903441-78.389348L423.294702 439.796538z"
+                                                  p-id="4229"></path>
+                                            <path d="M65.636906 731.924875" p-id="4230"></path>
+                                        </svg>
+                                    </el-tooltip>
+                                </div>
+
+                            </div>
                             <div>
-                                <el-input placeholder="请输入消息内容" type="textarea" :autosize="{ minRows: 3, maxRows: 3}"
+                                <el-input placeholder="请输入消息内容" :clearable="true" autofocus="true" maxlength="5000"
+                                          show-word-limit
+                                          type="textarea" :autosize="{ minRows: 3, maxRows: 3}"
                                           v-model="messageContent" class="input-with-select">
                                 </el-input>
                             </div>
@@ -160,46 +271,6 @@
             </p>
         </el-footer>
     </el-container>
-
-    <div id="chat-page" v-show="!showUser">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h2>群聊</h2>
-            </div>
-            <div class="connecting" v-show="connecting">
-                Connecting...
-            </div>
-            <ul id="messageArea">
-                <template v-for="(message,index) in messageList">
-                    <li class="event-message" v-if="message.type == 'JOIN'">
-                        <p>liuwang joined!</p>
-                    </li>
-                    <li class="event-message" v-else-if="message.type == 'LEAVE'">
-                        <p> left!</p>
-                    </li>
-                    <li class="chat-message" v-else>
-                        <i :style="message.style">{{message.sender[0]}}</i>
-                        <span>{{message.sender}}</span>
-                        <p>{{message.content}}</p>
-                    </li>
-                </template>
-                <!--                <li class="chat-message">-->
-                <!--                    <i style="background-color: rgb(255, 86, 82);">l</i>-->
-                <!--                    <span>liuwang</span>-->
-                <!--                    <p>你好</p>-->
-                <!--                </li>-->
-            </ul>
-            <form id="messageForm" name="messageForm" nameForm="messageForm">
-                <div class="form-group">
-                    <el-input placeholder="请输入消息内容" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"
-                              v-model="messageContent" class="input-with-select">
-
-                    </el-input>
-                    <el-button @click="sendMessage" type="info" slot="append" icon="el-icon-s-promotion">发送</el-button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 </body>
 <!-- import Vue before Element -->
@@ -208,5 +279,6 @@
 <script src="js/element/element.js"></script>
 <script src="js/websocket/sockjs.min.js"></script>
 <script src="js/websocket/stomp.min.js"></script>
+<script src="js/moment/moment.js"></script>
 <script src="js/chat/chat.js"></script>
 </html>

@@ -2,19 +2,30 @@ var vm = new Vue({
     el: '#app',
     data: function () {
         return {
-            loading: false,
+            drawer: false,
+            navType: "chatRoom",
+            loading: {
+                roomList: false,
+                userList: false,
+            },
             /**
              * 聊天室列表
              */
-            roomList: [{name: "群聊"}],
+            roomList: [{name: "群聊", src: "img/chat/chatroom.png"}],
             /**
              * 用户列表
              */
-            userList: [],
+            userList: [
+                {name: "超管", src: "img/chat/user-blue.png"}
+            ],
             /**
-             * 搜索
+             * 搜索聊天室
              */
-            searchText: "",
+            searchChatRoomText: "",
+            /**
+             * 搜索人员
+             */
+            searchUserListText: "",
             userInfo: {
                 username: ''
             },
@@ -30,55 +41,12 @@ var vm = new Vue({
             //消息列表
             messageList: [
                 {
-                    sender: "刘望",
-                    content: "",
-                    type: "JOIN",
-                    style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:00:01"
-                },
-                {
-                    sender: "刘望",
-                    content: "兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱",
+                    sender: "超管",
+                    content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
                     type: "CHAT",
                     style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:05:01"
+                    date: moment().format('YYYY-MM-DD HH:mm:ss')
                 },
-                {
-                    sender: "张三",
-                    content: "兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱",
-                    type: "CHAT",
-                    style: {"background-color": '#FF9800'},
-                    date: "2022-09-30 10:05:01"
-                },
-                {
-                    sender: "李四",
-                    content: "兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱",
-                    type: "CHAT",
-                    style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:05:01"
-                },
-                {
-                    sender: "刘望",
-                    content: "兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱",
-                    type: "CHAT",
-                    style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:05:01"
-                },
-                {
-                    sender: "刘望",
-                    content: "兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱,兄弟们我们不能天天带薪工作呀 我们是一群为梦想而奋斗的人，怎么能被金钱所困扰，我们应该追求梦想，而不应该追求金钱",
-                    type: "CHAT",
-                    style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:05:01"
-                },
-                {
-                    sender: "刘望",
-                    content: "",
-                    type: "LEAVE",
-                    style: {"background-color": '#2196F3'},
-                    date: "2022-09-30 10:30:01"
-                },
-
             ],
             stompClient: null,
             timer: '',
@@ -94,13 +62,35 @@ var vm = new Vue({
     },
     computed: {
         noMore() {
-            return this.roomList.length >= 20
+            return function (type) {
+                if (type == 'rootChat') {
+                    return this.roomList.length >= 20
+                }
+                if (type == 'userList') {
+                    return this.userList.length >= 20
+                }
+            }
         },
         disabled() {
-            return this.loading || this.noMore
+            return function (type) {
+                return this.loading[type] || this.noMore(type)
+            }
         }
     },
     methods: {
+        /**
+         * 打开设置
+         */
+        openSetting: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 改变导航
+         * @param type
+         */
+        changeNav: function (type) {
+            this.navType = type;
+        },
         /**
          * 登录
          */
@@ -113,14 +103,30 @@ var vm = new Vue({
         logout: function () {
             this.$message('开发中。。。');
         },
-        search: function () {
-            if (this.searchText == "") {
-                this.$message('消息内容不能为空');
+        searchChatRoom: function () {
+            if (this.searchChatRoomText == "") {
+                this.$message('搜索内容不能为空');
                 return;
             }
             this.$message('开发中。。。');
         },
-        add: function () {
+        searchUserList: function () {
+            if (this.searchUserListText == "") {
+                this.$message('搜索内容不能为空');
+                return;
+            }
+            this.$message('开发中。。。');
+        },
+        /**
+         * 添加用户
+         */
+        addUser: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 添加聊天室
+         */
+        addChatRoom: function () {
             this.$message('开发中。。。');
         },
         /**
@@ -138,8 +144,47 @@ var vm = new Vue({
          * 获取用户列表
          */
         loadUserList: function () {
-            return;
+            setTimeout(() => {
+                // var size = this.userList.length + 1;
+                // var room = {name: "群聊" + size};
+                // this.userList.push(room);
+                // this.loading = false
+            }, 500)
         },
+        /**
+         * 打开表情面板
+         */
+        openEmo: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 打开文件
+         */
+        openFile: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 打开消息历史
+         */
+        openMsgHistory: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 打开语音聊天
+         */
+        openVoiceChat: function () {
+            this.$message('开发中。。。');
+        },
+        /**
+         * 打开视频聊天
+         */
+        openVideoChat: function () {
+            this.$message('开发中。。。');
+        },
+        showMore: function () {
+            this.drawer = !this.drawer;
+        },
+
         /**
          * 进入聊天室
          * @param formName
@@ -151,7 +196,7 @@ var vm = new Vue({
                     _this.showUser = false;
                     _this.initWebSocket()
                 } else {
-                    console.log('error submit!!');
+                    this.$message("用户名不能为空");
                     return false;
                 }
             });
@@ -175,7 +220,7 @@ var vm = new Vue({
                 try {
                     that.stompClient.send("test");
                 } catch (err) {
-                    console.log("断线了: " + err);
+                    this.$message("断线重连");
                     that.connect(that.serverUrl);
                 }
             }, 5000);
@@ -209,7 +254,12 @@ var vm = new Vue({
             this.stompClient.subscribe('/topic/public', this.onMessageReceived);
             this.stompClient.send("/app/chat.addUser",
                 this.headers,
-                JSON.stringify({sender: this.userInfo.username, type: 'JOIN'})
+                JSON.stringify({
+                    sender: this.userInfo.username,
+                    type: 'NOTICE',
+                    content: this.userInfo.username + " 上线",
+                    date: moment().format('YYYY-MM-DD HH:mm:ss')
+                })
             )
         }
         ,
@@ -218,9 +268,13 @@ var vm = new Vue({
          * @param payload
          */
         onMessageReceived: function (payload) {
+            var _this = this;
             let message = JSON.parse(payload.body);
             message.style = {"background-color": this.getAvatarColor(message.sender)};
             this.messageList.push(message);
+            this.$nextTick(() => {
+                _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
+            })
         }
         ,
         /**
@@ -228,12 +282,13 @@ var vm = new Vue({
          */
         sendMessage: function () {
             if (this.messageContent == "") {
-                this.$message('消息内容不能为空');
+                this.$notify({title: '提示', message: '消息内容不能为空', type: 'warning'});
                 return;
             }
             var chatMessage = {
                 sender: this.userInfo.username,
                 content: this.messageContent,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 type: 'CHAT'
             };
             this.stompClient.send("/app/chat.sendMessage",
@@ -247,7 +302,7 @@ var vm = new Vue({
          * 连接失败
          */
         onConnectError: function (err) {
-            console.log("连接服务器失败,err:" + err);
+            this.$notify({title: '提示', message: '连接服务器失败', type: 'error'});
         },
         /**
          * 断开连接
@@ -255,7 +310,7 @@ var vm = new Vue({
         disconnect: function () {
             if (this.stompClient) {
                 this.stompClient.disconnect();
-                console.log("断开和服务其的ws连接")
+                this.$notify({title: '提示', message: '断开连接', type: 'info'});
             }
         },
         /**
