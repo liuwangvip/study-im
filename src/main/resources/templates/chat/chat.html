@@ -15,70 +15,187 @@
     </noscript>
 
 
-    <div class="username-page-container" v-show="showUser">
-        <el-form :model="userNameForm" :rules="rules" ref="userNameForm" label-width="100px" class="demo-ruleForm">
+    <div class="username-page-container" v-show="false">
+        <el-form :model="userInfo" :rules="rules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="昵称：" prop="name">
-                <el-input v-model="userNameForm.username" placeholder="请输入姓名"></el-input>
+                <el-input v-model="userInfo.username" placeholder="请输入姓名"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" style="background-color: #ff4743;color: #fff;border-color:#ff4743; "
-                           @click="startChat('userNameForm')">进入聊天室
+                           @click="enterChat('userInfoForm')">进入聊天室
                 </el-button>
             </el-form-item>
         </el-form>
     </div>
 
+    <el-container>
+        <el-header class="fd-head">
+            <div class="fd-head-title">
+                IM
+            </div>
+            <div class="fd-head-tail">
+                <div style="padding-top: 20px;cursor:pointer;">
+                    <img src="img/login.png" title="登录" @click="login"></img>
+                </div>
+                <div style="padding-top: 20px;cursor:pointer;">
+                    <img src="img/logout.png" title="注销" @click="logout"></img>
+                </div>
+            </div>
 
-    <!--        <div id="username-page" v-show="showUser">-->
-    <!--            <div class="username-page-container">-->
-    <!--                <h1 class="title">Type your username</h1>-->
-    <!--                <form id="usernameForm" name="usernameForm">-->
-    <!--                    <div class="form-group">-->
-    <!--                        <input type="text" id="name" v-model="username" placeholder="Username" autocomplete="off"-->
-    <!--                               class="form-control"/>-->
-    <!--                    </div>-->
-    <!--                    <div class="form-group">-->
-    <!--                        <button type="submit" @click="startChat" class="accent username-submit">Start Chatting</button>-->
-    <!--                    </div>-->
-    <!--                </form>-->
-    <!--            </div>-->
-    <!--        </div>-->
+        </el-header>
+        <el-container>
+            <el-aside class="fd-left-nav" width="auto">
+                <div class="fd-nav-container">
+                    <el-row class="fd-nav-container-item">
+                        <el-badge :value="200" :max="99" class="item">
+                            <el-button type="info" icon="el-icon-chat-round" circle></el-button>
+                        </el-badge>
+                    </el-row>
+                    <el-row class="fd-nav-container-item">
+                        <el-button type="info" icon="el-icon-user" circle></el-button>
+                    </el-row>
+                    <el-row class="fd-nav-container-item">
+                        <el-button type="info" icon="el-icon-setting" circle></el-button>
+                    </el-row>
+                </div>
+            </el-aside>
+            <el-container>
+                <el-aside class="fd-left-ul" width="200px">
+                    <div class="fd-left-ul-tool">
+                        <div style="width: 150px;padding-left: 10px">
+                            <el-input @keyup.enter.native="search" size="mini" prefix-icon="el-icon-search"
+                                      placeholder="搜索" v-model="searchText"
+                                      class="input-with-select">
+                            </el-input>
+                        </div>
+                        <div style="padding-left: 20px;padding-right: 5px;cursor:pointer;">
+                            <i class="el-icon-plus" @click="add"></i>
+                        </div>
+                    </div>
+
+                    <div style="overflow: auto;margin-bottom: 20px">
+                        <div class="infinite-list-wrapper">
+                            <ul class="list" v-infinite-scroll="loadRoomList" infinite-scroll-disabled="disabled">
+                                <template v-for="item in roomList">
+                                    <div class="fd-left-ul-item">
+                                        {{item.name}}
+                                    </div>
+                                </template>
+                            </ul>
+                            <p v-if="loading">加载中...</p>
+                            <p v-if="noMore">分界线</p>
+                        </div>
+                    </div>
+                </el-aside>
+                <el-container class="fd-chat-container">
+                    <el-header class="fd-chat-header">
+                        <div class="fd-chat-title">
+                            群聊(22)
+                        </div>
+                    </el-header>
+                    <el-main>
+                        <div class="fd-chat-main">
+                            <div class="fd-chat-content-item" v-for="(message,index) in messageList">
+                                <div class="fd-chat-notice" v-if="message.type == 'JOIN'">
+                                    <div class="chat-notice-text">
+                                        <span>{{message.sender}}</span>
+                                        <span>上线</span>
+                                        <span style="padding-left: 5px">{{message.date}}</span>
+                                    </div>
+                                </div>
+                                <div class="fd-chat-notice" v-else-if="message.type == 'LEAVE'">
+                                    <div class="chat-notice-text">
+                                        <span>{{message.sender}}</span>
+                                        <span>下线</span>
+                                        <span style="padding-left: 5px">{{message.date}}</span>
+                                    </div>
+                                </div>
+                                <div class="fd-chat-message" v-else>
+                                    <div :style="message.style" class="fd-chat-message-pic">
+                                        {{message.sender[0]}}
+                                    </div>
+                                    <div class="fd-chat-message-content">
+                                        <div class="fd-chat-message-content-xm">
+                                            {{message.sender}}
+                                        </div>
+                                        <div class="fd-chat-message-content-text">
+                                            {{message.content}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--                                <li class="event-message" v-if="message.type == 'JOIN'">-->
+                                <!--                                    <p>{{message.sender+'上线'}}</p>-->
+                                <!--                                </li>-->
+                                <!--                                <li class="event-message" v-else-if="message.type == 'LEAVE'">-->
+                                <!--                                    <p> {{message.sender+'下线'}}</p>-->
+                                <!--                                </li>-->
+                                <!--                                <li class="chat-message" v-else>-->
+                                <!--                                    <i :style="message.style">{{message.sender[0]}}</i>-->
+                                <!--                                    <span>{{message.sender}}</span>-->
+                                <!--                                    <p>{{message.content}}</p>-->
+                                <!--                                </li>-->
+                            </div>
+                        </div>
+                    </el-main>
+                    <el-footer class="fd-chat-footer" height="120">
+                        <div class="fd-chat-footer-send">
+                            <div>
+                                <el-input placeholder="请输入消息内容" type="textarea" :autosize="{ minRows: 3, maxRows: 3}"
+                                          v-model="messageContent" class="input-with-select">
+                                </el-input>
+                            </div>
+                            <div style="text-align: right;padding-top: 5px;padding-bottom: 10px">
+                                <el-button size="small" @click="sendMessage" type="success" icon="el-icon-s-promotion">
+                                    发送
+                                </el-button>
+                            </div>
+                        </div>
+                    </el-footer>
+                </el-container>
+            </el-container>
+        </el-container>
+        <el-footer class="fd-footer" height="auto">
+            <p class="copy-right">
+                Copyright &copy; 2020-2022@ISOLER
+            </p>
+        </el-footer>
+    </el-container>
 
     <div id="chat-page" v-show="!showUser">
         <div class="chat-container">
             <div class="chat-header">
                 <h2>群聊</h2>
             </div>
-            <div class="connecting" v-show="connected">
+            <div class="connecting" v-show="connecting">
                 Connecting...
             </div>
             <ul id="messageArea">
                 <template v-for="(message,index) in messageList">
-
                     <li class="event-message" v-if="message.type == 'JOIN'">
                         <p>liuwang joined!</p>
                     </li>
                     <li class="event-message" v-else-if="message.type == 'LEAVE'">
                         <p> left!</p>
                     </li>
-                    <li class="chat-message">
-                        <i style="background-color: rgb(255, 86, 82);">l</i>
-                        <span>{{username}}</span>
-                        <p>你好</p>
+                    <li class="chat-message" v-else>
+                        <i :style="message.style">{{message.sender[0]}}</i>
+                        <span>{{message.sender}}</span>
+                        <p>{{message.content}}</p>
                     </li>
                 </template>
-                <li class="chat-message">
-                    <i style="background-color: rgb(255, 86, 82);">l</i>
-                    <span>liuwang</span>
-                    <p>你好</p>
-                </li>
+                <!--                <li class="chat-message">-->
+                <!--                    <i style="background-color: rgb(255, 86, 82);">l</i>-->
+                <!--                    <span>liuwang</span>-->
+                <!--                    <p>你好</p>-->
+                <!--                </li>-->
             </ul>
             <form id="messageForm" name="messageForm" nameForm="messageForm">
                 <div class="form-group">
-                    <div class="input-group clearfix">
-                        <input type="text" id="message" placeholder="请输入消息" autocomplete="off" class="form-control"/>
-                        <button type="submit" class="primary">发送</button>
-                    </div>
+                    <el-input placeholder="请输入消息内容" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"
+                              v-model="messageContent" class="input-with-select">
+
+                    </el-input>
+                    <el-button @click="sendMessage" type="info" slot="append" icon="el-icon-s-promotion">发送</el-button>
                 </div>
             </form>
         </div>

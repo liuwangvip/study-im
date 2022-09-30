@@ -19,12 +19,22 @@ body {
 
 }
 
-.el-header {
+.fd-head {
+    /*background-color: #151515;*/
     background-color: #475050;
-    color: #333;
+    color: #FFF;
     text-align: center;
     line-height: 60px;
+    display: flex;
+    justify-content: center;
+    flex-flow: row nowrap;
+    align-items: center;
 }
+
+.fd-head .fd-head-title {
+    width: 200px;
+}
+
 
 .el-main {
     text-align: center;
@@ -64,7 +74,7 @@ body {
     background-color: #475050;
     color: #FFFFFF;
     text-align: center;
-    line-height: 60px;
+    line-height: 40px;
 }
 
 .el-footer .copy-right {

@@ -1,9 +1,3 @@
-* {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
 html, body {
     height: 100%;
     overflow: hidden;
@@ -21,21 +15,241 @@ body {
     height: 100%;
 }
 
+
+/* 定义滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+    border-radius: 10px;
+    background-color: rgba(50, 50, 50, .1);
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+    background-color: rgba(50, 50, 50, .3);
+}
+
 #app {
     width: 100%;
     height: 100%;
+    /*background-color: #128ff2;*/
 }
 
-body:before {
-    height: 50%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #128ff2;
-    content: "";
-    z-index: 0;
+#app > .el-container {
+    height: 100vh;
 }
+
+.fd-head {
+    /*background-color: #151515;*/
+    background-color: #475050;
+    color: #FFF;
+    text-align: center;
+    line-height: 60px;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.fd-head .fd-head-title {
+    width: 200px;
+}
+
+.fd-head .fd-head-tail {
+    width: 80px;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.fd-left-nav {
+    background-color: #909399;
+    width: auto;
+}
+
+.fd-left-nav .fd-nav-container {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    margin: 20px 20px 20px 0px;
+}
+
+.fd-left-nav .fd-nav-container .fd-nav-container-item {
+    padding: 10px;
+}
+
+.fd-left-ul {
+    background-color: #e0e0e1;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-right: solid 1px rgba(0, 0, 0, 0.1);
+}
+
+.fd-left-ul .fd-left-ul-tool {
+    background-color: #FFF;
+    height: 59px;
+    border-bottom: solid 1px gray;
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.fd-left-ul .fd-left-ul-item {
+    padding: 5px 10px 5px 40px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    background-image: url("../../img/chatroom.png");
+    background-repeat: no-repeat;
+    background-position-x: 5px;
+    background-position-y: center;
+}
+
+.fd-left-ul .fd-left-ul-item:hover {
+    background-color: #cbd6e7;
+}
+
+.fd-left-ul .fd-left-ul-item:active {
+    background-color: #cbd6e7;
+}
+
+.fd-left-ul ul {
+    padding-inline-start: 0px !important;
+}
+
+.fd-chat-container {
+
+}
+
+.fd-chat-container .fd-chat-main {
+
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-content-item {
+    padding-top: 20px;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-notice {
+    text-align: center;
+    color: #FFF;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-notice .chat-notice-text {
+    margin: 0 auto;
+    padding: 2px 15px;
+    width: fit-content;
+    font-size: 12px;
+    background-color: #d3d1d1;
+    border-radius: 2px;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message {
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message .fd-chat-message-content {
+    padding-left: 60px;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message .fd-chat-message-content-xm {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message .fd-chat-message-content-text {
+    padding: 5px 10px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message .fd-chat-message-pic {
+    position: absolute;
+    margin-top: 5px;
+    width: 42px;
+    height: 42px;
+    overflow: hidden;
+    left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+    line-height: 42px;
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    font-style: normal;
+    text-transform: uppercase;
+}
+
+.fd-chat-container .fd-chat-main .fd-chat-message i {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    overflow: hidden;
+    left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+    line-height: 42px;
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    font-style: normal;
+    text-transform: uppercase;
+}
+
+
+.fd-chat-container .fd-chat-header {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-bottom: solid 1px gray;
+    line-height: 60px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.fd-chat-container .fd-chat-header .fd-chat-title {
+
+}
+
+.fd-chat-container .fd-chat-footer {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-right: solid 1px rgba(0, 0, 0, 0.1);
+}
+
+.fd-chat-container .fd-chat-footer .fd-chat-footer-send {
+
+}
+
+.fd-footer {
+    background-color: #475050;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 40px;
+}
+
+.fd-footer .copy-right {
+    margin: 0px;
+}
+
+/*body:before {*/
+/*    height: 50%;*/
+/*    width: 100%;*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    background: #128ff2;*/
+/*    content: "";*/
+/*    z-index: 0;*/
+/*}*/
 
 .clearfix:after {
     display: block;
@@ -76,20 +290,20 @@ a {
     color: #128ff2;
 }
 
-button {
-    box-shadow: none;
-    border: 1px solid transparent;
-    font-size: 14px;
-    outline: none;
-    line-height: 100%;
-    white-space: nowrap;
-    vertical-align: middle;
-    padding: 0.6rem 1rem;
-    border-radius: 2px;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    min-height: 38px;
-}
+/*button {*/
+/*    box-shadow: none;*/
+/*    border: 1px solid transparent;*/
+/*    font-size: 14px;*/
+/*    outline: none;*/
+/*    line-height: 100%;*/
+/*    white-space: nowrap;*/
+/*    vertical-align: middle;*/
+/*    padding: 0.6rem 1rem;*/
+/*    border-radius: 2px;*/
+/*    transition: all 0.2s ease-in-out;*/
+/*    cursor: pointer;*/
+/*    min-height: 38px;*/
+/*}*/
 
 button.default {
     background-color: #e8e8e8;
@@ -138,7 +352,7 @@ button.accent {
 }
 
 
-#chat-page {
+.fd-chat-main {
     position: relative;
     height: 100%;
 }
@@ -155,7 +369,7 @@ button.accent {
     position: relative;
 }
 
-#chat-page ul {
+.fd-chat-main ul {
     list-style-type: none;
     background-color: #FFF;
     margin: 0;
@@ -165,39 +379,39 @@ button.accent {
     height: calc(100% - 150px);
 }
 
-#chat-page #messageForm {
+.fd-chat-main #messageForm {
     padding: 20px;
 }
 
-#chat-page ul li {
+.fd-chat-main ul li {
     line-height: 1.5rem;
     padding: 10px 20px;
     margin: 0;
     border-bottom: 1px solid #f4f4f4;
 }
 
-#chat-page ul li p {
+.fd-chat-main ul li p {
     margin: 0;
 }
 
-#chat-page .event-message {
+.fd-chat-main .event-message {
     width: 100%;
     text-align: center;
     clear: both;
 }
 
-#chat-page .event-message p {
+.fd-chat-main .event-message p {
     color: #777;
     font-size: 14px;
     word-wrap: break-word;
 }
 
-#chat-page .chat-message {
+.fd-chat-main .chat-message {
     padding-left: 68px;
     position: relative;
 }
 
-#chat-page .chat-message i {
+.fd-chat-main .chat-message i {
     position: absolute;
     width: 42px;
     height: 42px;
@@ -214,12 +428,12 @@ button.accent {
     text-transform: uppercase;
 }
 
-#chat-page .chat-message span {
+.fd-chat-main .chat-message span {
     color: #333;
     font-weight: 600;
 }
 
-#chat-page .chat-message p {
+.fd-chat-main .chat-message p {
     color: #43464b;
 }
 
@@ -277,7 +491,7 @@ button.accent {
         padding: 25px;
     }
 
-    #chat-page ul {
+    .fd-chat-main ul {
         height: calc(100% - 120px);
     }
 
