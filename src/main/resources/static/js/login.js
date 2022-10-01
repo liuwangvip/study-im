@@ -4,7 +4,8 @@ var vm = new Vue({
         return {
             ruleForm: {
                 username: '',
-                password: ''
+                password: '',
+                rememberMe: false
             },
             config: {
                 headers: {"Content-Type": "multipart/form-data"}

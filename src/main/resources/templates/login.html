@@ -19,24 +19,28 @@
 
             </div>
             <div class="fd-content">
-                <div class="fd-content-head">
-
+                <div class="fd-content-head"></div>
+                <div style="text-align: left">
+                    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-form-item label="用户名" prop="username">
+                            <el-input v-model="ruleForm.username"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                            <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="记住密码" prop="rememberMe">
+                            <el-switch style="text-align: left;" v-model="ruleForm.rememberMe"></el-switch>
+                        </el-form-item>
+                        <el-form-item>
+                            <div class="fd-login-btn" @click="login('ruleForm')">登录</div>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-link style="line-height: 20px" type="primary" href="register">没有账户？注册</el-link>
+                        </el-form-item>
+                    </el-form>
                 </div>
-                <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px"
-                         class="demo-ruleForm">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input v-model="ruleForm.username"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <div class="fd-login-btn" @click="login('ruleForm')">登录</div>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-link style="line-height: 20px" type="primary" href="register">没有账户？注册</el-link>
-                    </el-form-item>
-                </el-form>
+
             </div>
 
         </el-main>

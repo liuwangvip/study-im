@@ -82,7 +82,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies()
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
-                .permitAll();
+                .permitAll()
+                .and()
+                // 记住我功能
+                .rememberMe()
+                .rememberMeParameter("rememberMe")
+                .rememberMeCookieName("rememberMe")
+                //默认室2周不用登录
+                .tokenValiditySeconds(7 * 24 * 60 * 60)
+        ;
 
     }
 
