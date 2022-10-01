@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
-    <link rel="stylesheet" th:href="@{/css/common/element/elementUI.css}">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/element/element.css">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>登录</title>
 </head>
 <body>
-<div id="app" class="main-box">
-    <div :class="['container', 'container-register', { 'is-txl': isLogin }]">
-        <form>
-            <h2 class="title">Create Account</h2>
-            <span class="text">or use email for registration</span>
-            <input class="form__input" type="text" placeholder="Name"/>
-            <input class="form__input" type="password" placeholder="Password"/>
-            <div class="primary-btn">立即注册</div>
-        </form>
-    </div>
-    <div
-            :class="['container', 'container-login', { 'is-txl is-z200': isLogin }]"
-    >
-        <form>
-            <h2 class="title">Sign in to Website</h2>
-            <span class="text">or use email for registration</span>
-            <input class="form__input" type="password" placeholder="Password"/>
-            <input class="form__input" type="text" placeholder="Email"/>
-            <div class="primary-btn">立即登录</div>
-        </form>
-    </div>
-    <div :class="['switch', { login: isLogin }]">
-        <div class="switch__circle"></div>
-        <div class="switch__circle switch__circle_top"></div>
-        <div class="switch__container">
-            <h2>{{ isLogin ? 'Hello Friend !' : 'Welcome Back !' }}</h2>
-            <p>
-                {{
-                isLogin
-                ? 'Enter your personal details and start journey with us'
-                : 'To keep connected with us please login with your personal info'
-                }}
-            </p>
-            <div class="primary-btn" @click="isLogin = !isLogin">
-                {{ isLogin ? '立即注册' : '立即登录' }}
+<div id="app">
+    <el-container>
+        <el-header class="fd-head">
+            <div class="fd-head-title">
+                IM
             </div>
-        </div>
-    </div>
+        </el-header>
+        <el-main>
+            <div class="fd-content-bg">
+
+            </div>
+            <div class="fd-content">
+                <div class="fd-content-head">
+
+                </div>
+                <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px"
+                         class="demo-ruleForm">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="ruleForm.username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="password2">
+                        <el-input type="password" v-model="ruleForm.password2" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="login('ruleForm')">提交</el-button>
+                        <el-button @click="resetForm('ruleForm')">重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </el-main>
+        <el-footer height="auto">
+            <p class="copy-right">
+                Copyright &copy; 2020-2022@ISOLER
+            </p>
+        </el-footer>
+    </el-container>
 </div>
-<!-- import Vue before Element -->
-<script src="js/common/vue/vue.min.js"></script>
-<!-- import JavaScript -->
-<script src="js/common/element/elementUI.js"></script>
-<script src="js/login.js"></script>
+
 </body>
+<!-- import Vue before Element -->
+<script src="js/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="js/element/element.js"></script>
+<script src="js/axios/axios.min.js"></script>
+<script src="js/login.js"></script>
 </html>

@@ -2,12 +2,19 @@ package com.isoler.studyim.business.user.model.bean;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.isoler.studyim.business.user.model.eo.UserStatusEnum;
 import com.isoler.studyim.common.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -22,7 +29,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("db_chat.t_sys_user")
 @ApiModel(value = "SysUser对象", description = "系统用户表")
-public class SysUser extends BaseEntity {
+public class SysUser extends BaseEntity implements UserDetails {
 
 
     @ApiModelProperty(value = "登录id")
@@ -41,5 +48,53 @@ public class SysUser extends BaseEntity {
     @TableField("c_status")
     private String status;
 
+    @TableField(exist = false)
+    private List<SimpleGrantedAuthority> authorityList;
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.getAuthorityList();
+    }
+
+    /**
+     * 账户是否没有过期
+     *
+     * @return
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserStatusEnum.NORMAL.getStatus().equals(this.getStatus());
+    }
+
+    /**
+     * 账户是否没有被锁定
+     *
+     * @return
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserStatusEnum.NORMAL.getStatus().equals(this.getStatus());
+    }
+
+    /**
+     * 用户证书是否没有过期
+     *
+     * @return
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user is enabled or disabled. A disabled user cannot be
+     * authenticated.
+     *
+     * @return <code>true</code> if the user is enabled, <code>false</code> otherwise
+     */
+    @Override
+    public boolean isEnabled() {
+        return UserStatusEnum.NORMAL.getStatus().equals(this.getStatus());
+    }
 }

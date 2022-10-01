@@ -1,4 +1,4 @@
-package com.isoler.studyim.business.model;
+package com.isoler.studyim.common.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

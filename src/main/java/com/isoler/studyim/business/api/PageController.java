@@ -1,10 +1,14 @@
-package com.isoler.studyim.business.user.controller;
+package com.isoler.studyim.business.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * @author liuwang
+ */
 @Controller
-public class IndexController {
+public class PageController {
     /**
      * 首页面
      *
@@ -14,6 +18,7 @@ public class IndexController {
     public String getIndexPage() {
         return "index";
     }
+
 
     /**
      * 登录页
@@ -25,13 +30,13 @@ public class IndexController {
         return "login";
     }
 
-    @GetMapping("login2")
-    public String getLogin2Page() {
-        return "login/login";
-    }
 
-
-    @GetMapping("chat")
+    /**
+     * 聊天
+     *
+     * @return
+     */
+    @GetMapping("im")
     public String getChatPage() {
         return "chat/chat";
     }

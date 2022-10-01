@@ -1,7 +1,7 @@
 package com.isoler.studyim.business.chatmessage.controller;
 
 
-import com.isoler.studyim.business.model.ChatMessage;
+import com.isoler.studyim.common.model.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;

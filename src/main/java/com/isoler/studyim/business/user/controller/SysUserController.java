@@ -1,8 +1,11 @@
 package com.isoler.studyim.business.user.controller;
 
 
+import com.isoler.studyim.business.user.model.bean.SysUser;
+import com.isoler.studyim.common.api.CommonResult;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,7 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-07-28
  */
 @RestController
-@RequestMapping("//sysUser")
+@RequestMapping("user")
 public class SysUserController {
 
+    @GetMapping("name")
+    public CommonResult<SysUser> getCurrentUser(Authentication authentication) {
+        SysUser user = (SysUser) authentication.getPrincipal();
+        return CommonResult.success(user);
+    }
 }

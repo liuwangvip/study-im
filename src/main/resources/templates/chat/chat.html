@@ -14,9 +14,9 @@
         <h2>抱歉，您的浏览器不支持websocket,请升级浏览器版本</h2>
     </noscript>
     <div class="fd-user-page-container" v-show="showUser">
-        <el-form :model="userInfo" :rules="rules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="currentUser" :rules="rules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="昵称：" prop="name">
-                <el-input v-model="userInfo.username" placeholder="请输入姓名"></el-input>
+                <el-input v-model="currentUser.username" placeholder="请输入姓名"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" style="background-color: #ff4743;color: #fff;border-color:#ff4743; "
@@ -309,5 +309,6 @@
 <script src="js/websocket/sockjs.min.js"></script>
 <script src="js/websocket/stomp.min.js"></script>
 <script src="js/moment/moment.js"></script>
+<script src="js/axios/axios.min.js"></script>
 <script src="js/chat/chat.js"></script>
 </html>

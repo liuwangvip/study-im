@@ -22,7 +22,7 @@ var vm = new Vue({
              * 搜索人员
              */
             searchUserListText: "",
-            userInfo: {
+            currentUser: {
                 username: ''
             },
             showUser: true,
@@ -250,9 +250,9 @@ var vm = new Vue({
             this.stompClient.send("/app/chat.addUser",
                 this.headers,
                 JSON.stringify({
-                    sender: this.userInfo.username,
+                    sender: this.currentUser.username,
                     type: 'NOTICE',
-                    content: this.userInfo.username + " 上线",
+                    content: this.currentUser.username + " 上线",
                     date: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
             )
@@ -281,7 +281,7 @@ var vm = new Vue({
                 return;
             }
             var chatMessage = {
-                sender: this.userInfo.username,
+                sender: this.currentUser.username,
                 content: this.messageContent,
                 date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 type: 'CHAT'
@@ -318,7 +318,21 @@ var vm = new Vue({
             }
             return this.serverUrl = url;
         },
+        /**
+         * 获取当前登录用户
+         */
+        getLoginUser: function () {
+            axios.get("user/name").then(function (res) {
+                if (res.data.success) {
+                    this.showUser = false;
+                }
+                console.log(res);
+            }).catch(function (err) {
+
+            });
+        },
         init: function () {
+            this.getLoginUser();
             this.navType = "chatRoom";
             this.serverUrl = this.getServerUrl();
             console.log("服务器地址:" + this.serverUrl);

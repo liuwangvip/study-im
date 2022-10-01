@@ -1,7 +1,7 @@
 package com.isoler.studyim.business.user.service;
 
-import com.isoler.studyim.business.user.model.bean.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.isoler.studyim.business.user.model.bean.SysUser;
 
 /**
  * <p>
@@ -12,5 +12,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-07-28
  */
 public interface ISysUserService extends IService<SysUser> {
-
+    /**
+     * 根据用户名获取用户信息
+     *
+     * @param username
+     * @return
+     */
+    SysUser getByUserName(String username);
 }
