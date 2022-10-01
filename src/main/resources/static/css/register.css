@@ -76,7 +76,7 @@ body {
 
 .fd-login-btn {
     height: 40px;
-    margin-top: 20px;
+    margin-top: 0px;
     cursor: pointer;
     text-align: center;
     color: #FFF;
