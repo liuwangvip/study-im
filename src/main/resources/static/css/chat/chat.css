@@ -68,11 +68,40 @@ body {
 }
 
 .fd-head .fd-head-tail {
-    width: 80px;
+    width: 120px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-flow: row nowrap;
     align-items: center;
+}
+
+.fd-head .fd-head-tail .fd-head-tail-name {
+    padding-top: 18px;
+    padding-left: 5px;
+    text-align: center;
+    line-height: 22px;
+    font-size: 22px;
+    display: inline-block;
+}
+
+.fd-head .fd-head-tail .el-dropdown {
+    line-height: 20px;
+}
+
+.fd-head .fd-head-tail .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+}
+
+.fd-head .fd-head-tail .el-icon-arrow-down {
+    font-size: 16px;
+}
+
+.fd-head .fd-head-tail .demonstration {
+    display: block;
+    color: #8492a6;
+    font-size: 14px;
+    margin-bottom: 0px;
 }
 
 .fd-left-nav {
@@ -382,7 +411,7 @@ body {
 .fd-drawer-container .fd-user .fd-user-list .fd-user-item {
     margin-right: 20px;
     margin-bottom: 20px;
-    line-height: 30px;
+    line-height: 20px;
     cursor: pointer;
     width: fit-content;
 }

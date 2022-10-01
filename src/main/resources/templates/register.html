@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
     <link rel="stylesheet" href="css/element/element.css">
     <meta charset="UTF-8">
-    <title>登录</title>
+    <title>注册</title>
 </head>
 <body>
 <div id="app">
@@ -16,11 +16,9 @@
         </el-header>
         <el-main>
             <div class="fd-content-bg">
-
             </div>
             <div class="fd-content">
                 <div class="fd-content-head">
-
                 </div>
                 <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px"
                          class="demo-ruleForm">
@@ -30,11 +28,14 @@
                     <el-form-item label="密码" prop="password">
                         <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                     </el-form-item>
-                    <el-form-item>
-                        <div class="fd-login-btn" @click="login('ruleForm')">登录</div>
+                    <el-form-item label="确认密码" prop="password2">
+                        <el-input type="password" v-model="ruleForm.password2" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-link style="line-height: 20px" type="primary" href="register">没有账户？注册</el-link>
+                        <div class="fd-login-btn" @click="register('ruleForm')">注册</div>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-link style="line-height: 20px" type="primary" href="login">已有账户？登录</el-link>
                     </el-form-item>
                 </el-form>
             </div>
@@ -54,5 +55,5 @@
 <!-- import JavaScript -->
 <script src="js/element/element.js"></script>
 <script src="js/axios/axios.min.js"></script>
-<script src="js/login.js"></script>
+<script src="js/register.js"></script>
 </html>

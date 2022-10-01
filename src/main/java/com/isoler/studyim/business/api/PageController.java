@@ -2,7 +2,6 @@ package com.isoler.studyim.business.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * @author liuwang
@@ -28,6 +27,16 @@ public class PageController {
     @GetMapping("login")
     public String getLoginPage() {
         return "login";
+    }
+
+    /**
+     * 登录页
+     *
+     * @return
+     */
+    @GetMapping("register")
+    public String getRegisterPage() {
+        return "register";
     }
 
 

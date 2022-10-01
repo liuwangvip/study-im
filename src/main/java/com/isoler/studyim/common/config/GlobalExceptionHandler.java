@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @Configuration
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(RuntimeException.class)
     public CommonResult runtimeExceptionHandler(RuntimeException e) {
         log.error("全局异常处理-RuntimeException", e);

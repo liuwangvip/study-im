@@ -11,9 +11,7 @@ var vm = new Vue({
             /**
              * 用户列表
              */
-            userList: [
-                {name: "超管", src: "img/chat/user-blue.png"}
-            ],
+            userList: [{name: "超管", src: "img/chat/user-blue.png"}],
             /**
              * 搜索聊天室
              */
@@ -70,6 +68,16 @@ var vm = new Vue({
         }
     },
     methods: {
+        handleCommand(command) {
+            switch (command) {
+                case 'logout':
+                    window.location.href = "logout";
+                    break;
+                case 'login':
+                    window.location.href = "login";
+                    break;
+            }
+        },
         /**
          * 打开设置
          */
@@ -93,7 +101,7 @@ var vm = new Vue({
          * 注销登录
          */
         logout: function () {
-            this.$message('开发中。。。');
+            window.location.href = "logout";
         },
         searchChatRoom: function () {
             if (this.searchChatRoomText == "") {
@@ -126,7 +134,7 @@ var vm = new Vue({
          */
         loadRoomList: function () {
             this.roomList.splice(0);
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 1; i++) {
                 var size = this.roomList.length + 1;
                 var room = {name: "群聊" + size, src: "img/chat/chatroom.png"};
                 this.roomList.push(room);
@@ -322,9 +330,12 @@ var vm = new Vue({
          * 获取当前登录用户
          */
         getLoginUser: function () {
+            var _this = this;
             axios.get("user/name").then(function (res) {
                 if (res.data.success) {
-                    this.showUser = false;
+                    _this.showUser = false;
+                    _this.currentUser = res.data.result;
+                    _this.initWebSocket();
                 }
                 console.log(res);
             }).catch(function (err) {

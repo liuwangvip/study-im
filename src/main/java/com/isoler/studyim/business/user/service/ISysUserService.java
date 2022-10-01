@@ -2,6 +2,7 @@ package com.isoler.studyim.business.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.isoler.studyim.business.user.model.bean.SysUser;
+import com.isoler.studyim.business.user.model.dto.UserDto;
 
 /**
  * <p>
@@ -19,4 +20,12 @@ public interface ISysUserService extends IService<SysUser> {
      * @return
      */
     SysUser getByUserName(String username);
+
+    /**
+     * 注册用户
+     *
+     * @param dto
+     * @return
+     */
+    SysUser register(UserDto dto);
 }

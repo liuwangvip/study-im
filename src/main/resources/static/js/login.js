@@ -1,45 +1,21 @@
 var vm = new Vue({
     el: '#app',
     data: function () {
-        var validatePass = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入密码'));
-            } else {
-                if (this.ruleForm.password !== '') {
-                    this.$refs.ruleForm.validateField('password2');
-                }
-                callback();
-            }
-        };
-        var validatePass2 = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请再次输入密码'));
-            } else if (value !== this.ruleForm.password) {
-                callback(new Error('两次输入密码不一致!'));
-            } else {
-                callback();
-            }
-        };
         return {
             ruleForm: {
                 username: '',
-                password: '',
-                password2: '',
+                password: ''
             },
             config: {
                 headers: {"Content-Type": "multipart/form-data"}
             },
             rules: {
                 username: [
-                    {required: true, message: '请输入昵称', trigger: 'blur'},
-                    {min: 1, max: 10, message: '昵称长度限制：1一10', trigger: 'blur'}
+                    {required: true, message: '请输入昵称', trigger: 'blur'}
                 ],
                 password: [
-                    {validator: validatePass, trigger: 'blur'}
-                ],
-                password2: [
-                    {validator: validatePass2, trigger: 'blur'}
-                ],
+                    {required: true, message: '请输入密码', trigger: 'blur'}
+                ]
             }
         }
     },
@@ -65,21 +41,11 @@ var vm = new Vue({
                     return false;
                 }
             });
-        },
-        resetForm: function (formName) {
-            this.$refs[formName].resetFields();
         }
-        ,
-        register: function () {
-            //TODO 注册
-        }
-        ,
-    }
-    ,
+    },
     created: function () {
 
-    }
-    ,
+    },
     mounted: function () {
 
     }

@@ -4,9 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.isoler.studyim.business.user.mapper.SysUserMapper;
 import com.isoler.studyim.business.user.model.bean.SysUser;
+import com.isoler.studyim.business.user.model.dto.UserDto;
+import com.isoler.studyim.business.user.model.eo.UserStatusEnum;
 import com.isoler.studyim.business.user.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,5 +39,22 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             log.warn("用户名重复:{}", username);
         }
         return list.get(0);
+    }
+
+    @Override
+    public SysUser register(UserDto dto) {
+        final SysUser byUserName = this.getByUserName(dto.getUsername());
+        if (byUserName != null) {
+            throw new RuntimeException("注册失败，用户昵称已存在");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        SysUser user = new SysUser();
+        BeanUtils.copyProperties(dto, user);
+        user.setUsername(dto.getUsername());
+        user.setLoginId(user.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+        user.setStatus(UserStatusEnum.NORMAL.getStatus());
+        this.save(user);
+        return user;
     }
 }
