@@ -3,11 +3,7 @@ var vm = new Vue({
     data: function () {
         return {
             drawer: false,
-            navType: "chatRoom",
-            loading: {
-                roomList: false,
-                userList: false,
-            },
+            navType: "",
             /**
              * 聊天室列表
              */
@@ -60,20 +56,16 @@ var vm = new Vue({
             }
         }
     },
-    computed: {
-        noMore() {
-            return function (type) {
-                if (type == 'rootChat') {
-                    return this.roomList.length >= 20
-                }
-                if (type == 'userList') {
-                    return this.userList.length >= 20
-                }
-            }
-        },
-        disabled() {
-            return function (type) {
-                return this.loading[type] || this.noMore(type)
+    watch: {
+        navType: function (newVal, oldVal) {
+            console.log(newVal, oldVal);
+            switch (newVal) {
+                case 'userList':
+                    this.loadUserList();
+                    return;
+                case 'chatRoom':
+                    this.loadRoomList();
+                    return;
             }
         }
     },
@@ -133,23 +125,23 @@ var vm = new Vue({
          * 获取聊天室列表
          */
         loadRoomList: function () {
-            setTimeout(() => {
-                // var size = this.roomList.length + 1;
-                // var room = {name: "群聊" + size};
-                // this.roomList.push(room);
-                // this.loading = false
-            }, 500)
+            this.roomList.splice(0);
+            for (let i = 0; i < 10; i++) {
+                var size = this.roomList.length + 1;
+                var room = {name: "群聊" + size, src: "img/chat/chatroom.png"};
+                this.roomList.push(room);
+            }
         },
         /**
          * 获取用户列表
          */
         loadUserList: function () {
-            setTimeout(() => {
-                // var size = this.userList.length + 1;
-                // var room = {name: "群聊" + size};
-                // this.userList.push(room);
-                // this.loading = false
-            }, 500)
+            this.userList.splice(0);
+            for (let i = 0; i < 10; i++) {
+                var size = this.userList.length + 1;
+                var room = {name: "用户" + size, src: "img/chat/user-blue.png"};
+                this.userList.push(room);
+            }
         },
         /**
          * 打开表情面板
@@ -183,6 +175,9 @@ var vm = new Vue({
         },
         showMore: function () {
             this.drawer = !this.drawer;
+            if (this.drawer) {
+                this.loadUserList();
+            }
         },
 
         /**
@@ -322,11 +317,15 @@ var vm = new Vue({
                 return url.slice(0, url.lastIndexOf("/"));
             }
             return this.serverUrl = url;
+        },
+        init: function () {
+            this.navType = "chatRoom";
+            this.serverUrl = this.getServerUrl();
+            console.log("服务器地址:" + this.serverUrl);
         }
     },
     mounted: function () {
-        this.serverUrl = this.getServerUrl();
-        console.log("服务器地址:" + this.serverUrl);
+        this.init();
     }
     ,
     beforeDestroy: function () {
