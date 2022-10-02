@@ -3,6 +3,10 @@ server:
   port: 8080
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 200MB
   profiles:
     active: prod
   application:
@@ -26,7 +30,7 @@ mybatis-plus:
       #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
       field-strategy: NOT_EMPTY
       #数据库类型
-      db-type: h2
+      db-type: postgre_sql
   configuration:
     # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
     map-underscore-to-camel-case: true

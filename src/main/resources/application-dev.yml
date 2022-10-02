@@ -11,3 +11,24 @@ spring:
           driver-class-name: org.postgresql.Driver
           url: jdbc:postgresql://43.138.159.130:5432/isoler
       lazy: true
+
+# minio 存储配置
+minio:
+  endpoint: http://43.138.159.130:8001
+  accessKey: admin
+  secretKey: 12345678Aa
+  storageId: s3
+  bucket-name: im-bucket
+  pre-path: storage
+
+# 定时任务配置
+schdule:
+  clean-file:
+    # 每天凌晨清理过期文件
+    cron: 0 0 0 * * ?
+
+# 打印错误信息堆栈
+server:
+  error:
+    include-stacktrace: always
+    include-exception: true

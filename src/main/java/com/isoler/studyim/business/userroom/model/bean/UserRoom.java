@@ -3,7 +3,7 @@ package com.isoler.studyim.business.userroom.model.bean;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableField;
 
-import com.isoler.studyim.common.model.BaseEntity;
+import com.isoler.studyim.common.model.bean.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

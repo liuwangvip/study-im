@@ -130,7 +130,7 @@ public class CodeGenerateTest {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.isoler.studyim.business.userroom");
+        pc.setParent("com.isoler.studyim.business.filestorage");
         pc.setModuleName("");
         pc.setEntity("model.bean");
         pc.setMapper("mapper");
@@ -180,7 +180,7 @@ public class CodeGenerateTest {
         strategy.setEntityTableFieldAnnotationEnable(true);
         // 生成指定表名的相关文件
 //        strategy.setInclude("t_sys_menu", "t_sys_role", "t_sys_role_menu", "t_sys_user", "t_sys_user_role");
-        strategy.setInclude("t_user_room");
+        strategy.setInclude("t_file_storage");
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();

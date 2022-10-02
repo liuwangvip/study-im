@@ -12,7 +12,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CommonProperty {
     CREATE_TIME("createTime"),
-    UPDATE_TIME("updateTime");
+    UPDATE_TIME("updateTime"),
+    CREATOR_ID("creatorId"),
+    UPDATOR_ID("updatorId");
     private String name;
 
 

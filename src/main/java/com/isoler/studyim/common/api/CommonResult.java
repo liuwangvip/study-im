@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.ServletResponse;
 import java.io.PrintWriter;
@@ -89,10 +90,29 @@ public class CommonResult<T> {
     /**
      * 失败返回结果
      *
+     * @param status 错误码
+     * @param data 数据
+     */
+    public static <T> CommonResult<T> failed(HttpStatus status, T data) {
+        return new CommonResult<T>(status.value(), status.getReasonPhrase(), false, data);
+    }
+
+    /**
+     * 失败返回结果
+     *
      * @param message 提示信息
      */
     public static <T> CommonResult<T> failed(String message) {
         return new CommonResult<T>(ResultCode.FAILED.getCode(), message, false, null);
+    }
+
+    /**
+     * 失败返回结果
+     *
+     * @param message 提示信息
+     */
+    public static <T> CommonResult<T> failed(long code, String message) {
+        return new CommonResult<T>(code, message, false, null);
     }
 
     /**

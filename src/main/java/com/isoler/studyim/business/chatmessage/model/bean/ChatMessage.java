@@ -2,7 +2,8 @@ package com.isoler.studyim.business.chatmessage.model.bean;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.isoler.studyim.common.model.BaseEntity;
+import com.isoler.studyim.business.chatmessage.model.eo.MessageStatusEnum;
+import com.isoler.studyim.common.model.bean.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,6 +25,9 @@ import lombok.experimental.Accessors;
 @ApiModel(value = "ChatMessage对象", description = "聊天消息")
 public class ChatMessage extends BaseEntity {
 
+    @ApiModelProperty(value = "发送目标类型（个人，聊天室)")
+    @TableField("c_target_type")
+    private String targetType;
 
     @ApiModelProperty(value = "消息类型(提示，文字，图片，文件）")
     @TableField("c_type")
@@ -36,12 +40,20 @@ public class ChatMessage extends BaseEntity {
     @TableField("c_target_id")
     private String targetId;
 
-    @ApiModelProperty(value = "发送目标类型（个人，聊天室)")
-    @TableField("c_target_type")
-    private String targetType;
-
     @ApiModelProperty(value = "消息内容")
     @TableField("c_content")
     private String content;
+
+    @ApiModelProperty(value = "文件id")
+    @TableField("c_fileId")
+    private String fileId;
+
+    @ApiModelProperty(value = "文件名称")
+    @TableField("c_file_name")
+    private String fileName;
+
+    @ApiModelProperty(value = "消息是否失效,默认有效")
+    @TableField("c_status")
+    private String status = MessageStatusEnum.VALID.getStatus();
 
 }

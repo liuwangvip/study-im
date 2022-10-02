@@ -1,4 +1,4 @@
-package com.isoler.studyim.common.model;
+package com.isoler.studyim.common.model.bean;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;

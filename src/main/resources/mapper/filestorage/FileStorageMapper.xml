@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.isoler.studyim.business.filestorage.mapper.FileStorageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.isoler.studyim.business.filestorage.model.bean.FileStorage">
+        <id column="c_id" property="id" />
+        <result column="c_file_name" property="fileName" />
+        <result column="c_file_protocol" property="fileProtocol" />
+        <result column="n_file_size" property="fileSize" />
+        <result column="c_file_md5" property="fileMd5" />
+        <result column="dt_expire_time" property="expireTime" />
+        <result column="dt_create_time" property="createTime" />
+        <result column="dt_update_time" property="updateTime" />
+        <result column="n_order" property="order" />
+        <result column="c_creator_id" property="creatorId" />
+        <result column="c_updator_id" property="updatorId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        c_id, c_file_name, c_file_protocol, n_file_size, c_file_md5, dt_expire_time, dt_create_time, dt_update_time, n_order, c_creator_id, c_updator_id
+    </sql>
+
+</mapper>

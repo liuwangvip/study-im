@@ -10,13 +10,16 @@
         <result column="c_target_id" property="targetId" />
         <result column="c_target_type" property="targetType" />
         <result column="c_content" property="content" />
+        <result column="c_file_id" property="fileId" />
+        <result column="c_file_name" property="fileName" />
+        <result column="c_status" property="status" />
         <result column="dt_create_time" property="createTime" />
         <result column="dt_update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        c_id, c_type, c_sender_id, c_target_id, c_target_type, c_content, dt_create_time, dt_update_time
+        c_id, c_type, c_sender_id, c_target_id, c_target_type, c_content, c_file_id, c_file_name, c_status, dt_create_time, dt_update_time
     </sql>
 
 </mapper>
