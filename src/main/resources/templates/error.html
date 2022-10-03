@@ -1,27 +1,241 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <meta name="viewport"
+          content="width=device-width, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/element/element.css">
     <title>Spring Boot管理后台</title>
-    <script type="text/javascript">
-    </script>
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-weight: 400;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.58;
+            color: #333;
+            background-color: #f4f4f4;
+            height: 100%;
+        }
+
+
+        /* 定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 5px;
+        }
+
+        /*定义滚动条轨道 内阴影+圆角*/
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+            border-radius: 10px;
+            background-color: rgba(50, 50, 50, .1);
+        }
+
+        /*定义滑块 内阴影+圆角*/
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+            background-color: rgba(50, 50, 50, .3);
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+        }
+
+        #app > .el-container {
+            height: 100vh;
+        }
+
+        .fd-head {
+            box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+            background-color: #000000;
+            color: #FFF;
+            font-weight: bold;
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+            display: flex;
+            justify-content: center;
+            flex-flow: row nowrap;
+            align-items: center;
+        }
+
+        .fd-head .fd-head-title {
+            width: 200px;
+        }
+
+        .fd-main {
+            display: flex;
+            justify-content: center;
+            flex-flow: column nowrap;
+            align-items: center;
+        }
+
+        .fd-tip-img {
+            max-width: 100%;
+            width: 275px;
+            height: 250px;
+            position: relative;
+            padding-top: 50px;
+            text-align: center;
+        }
+
+        .fd-error-code {
+            text-align: center;
+            position: absolute;
+            top: 128px;
+            left: 50%;
+            width: 60px;
+            margin-left: -131px;
+            color: red;
+        }
+
+        @media (min-width: 576px) {
+            .fd-tip-img {
+                max-width: 100%;
+                width: 275px;
+                height: 250px;
+            }
+
+            .fd-error-code {
+                text-align: center;
+                top: 128px;
+                width: 60px;
+                margin-left: -131px;
+                font-size: 18px;
+                color: red;
+            }
+
+            .fd-error-trace {
+                width: 100% !important;
+                height: 400px;
+                overflow-y: scroll;
+                overflow-x: hidden;
+            }
+        }
+
+        .fd-error-message {
+            text-align: center;
+            padding: 3px 0 10px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .fd-error-trace {
+            word-wrap: break-word;
+            word-break: break-all;
+            color: red;
+            padding-left: 10px;
+            padding-right: 10px;
+            width: 380px;
+            height: 250px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+        }
+
+        .fd-btn-back {
+            min-width: 120px;
+            height: 40px;
+            line-height: 40px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            background-color: #E6454A;
+        }
+
+        .fd-btn-back:active {
+            background-color: rgba(230, 69, 74, 0.8);
+        }
+
+        .fd-footer {
+            box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <div id="navbar">
-            <h1>系统异常统一处理</h1>
-            <#if status??><h3>状态码：${status}</h3></#if>
-            <#if timestamp??><h3>时间：${timestamp?string('dd.MM.yyyy HH:mm:ss')}</h3></#if>
-            <#if error??><h3>错误：${error}</h3></#if>
-            <#if message??><h3>错误信息：${message}</h3></#if>
-            <#if path??> <h3>路径：${path}</h3></#if>
-            <h2>Debug</h2>
-            <#if trace??>
-                <h2>异常堆栈跟踪日志StackTrace</h2>
-                <#list trace as line>
-                 <div>${line}</div>
-                </#list>
-            </#if>
-        </div>
-    </div>
+<div id="app">
+    <el-container>
+        <el-header class="fd-head" height="40px">
+            <div class="fd-head-title">
+                IM
+            </div>
+        </el-header>
+        <el-main class="fd-main">
+            <div style="text-align: center">
+                <img class="fd-tip-img" src="img/error/tip-img.png" alt="错误提示">
+                <span class="fd-error-code">
+                    <#if status??>
+                        ${status}
+                    <#else>
+                        500
+                    </#if>
+                </span>
+                <p class="fd-error-message">抱歉出错了</p>
+                <button class="fd-btn-back" onclick="window.history.back()">返回</button>
+            </div>
+            <div>
+                <#if message??>
+                    <div style="padding-left: 10px;padding-right: 10px">
+                        <span>错误信息：</span>
+                        <span style="color: red">${message}</span>
+                    </div>
+                    <#if trace??>
+                        <div class="fd-error-trace">
+                            <#list trace as line>
+                                <div>
+                                    ${line}
+                                </div>
+                            </#list>
+                        </div>
+                    </#if>
+                </#if>
+            </div>
+        </el-main>
+        <el-footer class="fd-footer" height="auto">
+            <p class="copy-right">
+                Copyright &copy; 2020-2022@ISOLER
+            </p>
+        </el-footer>
+    </el-container>
+    <#--    <div id="navbar">-->
+    <#--        <h1>系统异常统一处理</h1>-->
+    <#--        <#if status??><h3>状态码：${status}</h3></#if>-->
+    <#--        <#if timestamp??><h3>时间：${timestamp?string('yyyy-MM-dd HH:mm:ss')}</h3></#if>-->
+    <#--        <#if error??><h3>错误：${error}</h3></#if>-->
+    <#--        <#if message??><h3>错误信息：${message}</h3></#if>-->
+    <#--        <#if path??> <h3>路径：${path}</h3></#if>-->
+    <#--        <h2>Debug</h2>-->
+    <#--        <#if trace??>-->
+    <#--            <h2>异常堆栈跟踪日志StackTrace</h2>-->
+    <#--            <#list trace as line>-->
+    <#--                <div>${line}</div>-->
+    <#--            </#list>-->
+    <#--        </#if>-->
+    <#--    </div>-->
+</div>
 </body>
+<!-- import Vue before Element -->
+<script src="js/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="js/element/element.js"></script>
 </html>

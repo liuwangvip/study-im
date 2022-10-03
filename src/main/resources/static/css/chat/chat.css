@@ -375,10 +375,12 @@ body {
 }
 
 .fd-footer {
-    background-color: #475050;
-    color: #FFFFFF;
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    font-size: 12px;
+    color: #999;
     text-align: center;
-    line-height: 40px;
+    background-color: #f5f5f5;
+    line-height: 30px;
 }
 
 .fd-footer .copy-right {
