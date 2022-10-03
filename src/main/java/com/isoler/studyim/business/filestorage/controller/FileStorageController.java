@@ -1,11 +1,12 @@
 package com.isoler.studyim.business.filestorage.controller;
 
 
-import com.isoler.studyim.business.filestorage.model.dto.FileDownloadDto;
+import com.isoler.studyim.business.filestorage.model.dto.FileDownloadResultDto;
 import com.isoler.studyim.business.filestorage.model.dto.FileUploadResultDto;
 import com.isoler.studyim.business.filestorage.service.IFileStorageService;
 import com.isoler.studyim.common.api.CommonResult;
 import com.isoler.studyim.common.util.FileUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +25,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("file")
-//@Api(tags = "文件存储接口")
+@Api(tags = "文件存储接口")
 public class FileStorageController {
 
     @Resource
@@ -38,7 +39,7 @@ public class FileStorageController {
     @GetMapping("{id}")
     @ApiOperation("下载文件")
     public void downloadFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
-        FileDownloadDto dto = fileStorageService.downloadFile(id);
+        FileDownloadResultDto dto = fileStorageService.downloadFile(id);
         FileUtil.downloadFile(response, dto.getInputStream(), dto.getFileName());
     }
 

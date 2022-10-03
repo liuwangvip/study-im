@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.isoler.studyim.business.filestorage.mapper.FileStorageMapper;
 import com.isoler.studyim.business.filestorage.model.bean.FileStorage;
-import com.isoler.studyim.business.filestorage.model.dto.FileDownloadDto;
+import com.isoler.studyim.business.filestorage.model.dto.FileDownloadResultDto;
 import com.isoler.studyim.business.filestorage.model.dto.FileUploadResultDto;
 import com.isoler.studyim.business.filestorage.service.IFileStorageService;
 import com.isoler.studyim.common.minio.model.MinioAttribute;
@@ -45,14 +45,14 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
     private IMinioStorageService minioStorageService;
 
     @Override
-    public FileDownloadDto downloadFile(String id) {
+    public FileDownloadResultDto downloadFile(String id) {
         FileStorage fileStorage = this.getById(id);
         if (fileStorage == null || StringUtils.isBlank(fileStorage.getFileProtocol())) {
             log.error("文件下载失败，文件不存在，文件id:{}", id);
             throw new RuntimeException("文件下载失败，文件不存在");
         }
         InputStream inputStream = minioStorageService.getInputStream(fileStorage.getFileProtocol());
-        return new FileDownloadDto().setFileName(fileStorage.getFileName())
+        return new FileDownloadResultDto().setFileName(fileStorage.getFileName())
                 .setInputStream(inputStream);
 
     }

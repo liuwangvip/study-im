@@ -6,21 +6,22 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@EnableOpenApi
+@EnableSwagger2
+
 @Configuration
-public class Swagger3Config {
+public class Swagger2Config {
     @Bean
     public Docket createRestApi() {
-        return new Docket(DocumentationType.OAS_30)
+        return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .securityContexts(securityContexts())
                 .securitySchemes(securitySchemes())
@@ -33,10 +34,11 @@ public class Swagger3Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Swagger3接口文档")
+                .title("Swagger2接口文档")
                 .description("接口文档")
-                .contact(new Contact("template", "http://localhost:8080/swagger-ui/index.html", "who@outlook.com"))
+                .contact("isoler@outlook.com")
                 .version("1.0")
+                .license("Apache 2.0")
                 .build();
     }
 

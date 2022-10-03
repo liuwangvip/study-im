@@ -1,6 +1,7 @@
 package com.isoler.studyim.business.chatroom.controller;
 
 
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("chatRoom")
-//@Api(tags = "聊天室接口")
+@Api(tags = "聊天室接口")
 public class ChatRoomController {
 
 }

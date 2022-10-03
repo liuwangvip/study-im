@@ -2,6 +2,7 @@ package com.isoler.studyim.business.chatmessage.controller;
 
 
 import com.isoler.studyim.common.model.ChatMessage;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-//@Api(tags = "消息接口")
+@Api(tags = "消息接口")
 @RequestMapping("")
 public class ChatMessageController {
 

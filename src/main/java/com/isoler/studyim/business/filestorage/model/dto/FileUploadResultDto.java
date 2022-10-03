@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "文件上传dto", description = "")
+@ApiModel(value = "文件上传结果dto", description = "")
 public class FileUploadResultDto implements Serializable {
 
     @ApiModelProperty(value = "文件id")
