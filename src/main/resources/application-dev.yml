@@ -22,10 +22,16 @@ minio:
   pre-path: storage
 
 # 定时任务配置
-schdule:
+schedule:
   clean-file:
-    # 每天凌晨清理过期文件
+    # 每天凌晨12点清理过期文件
     cron: 0 0 0 * * ?
+  invalid-message:
+    # 每天凌晨1点清理过期文件
+    cron: 0 0 1 * * ?
+  clean-message:
+    # 每天凌晨2点清理过期文件
+    cron: 0 0 2 * * ?
 
 # 打印错误信息堆栈
 server:

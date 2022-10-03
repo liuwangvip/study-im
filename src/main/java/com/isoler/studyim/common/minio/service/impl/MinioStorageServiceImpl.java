@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -135,7 +136,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
                             .contentType(mediaTypeValue)
                             .build()
             );
-            return getFileProtocol(attribute);
+            return getFileProtocol(attribute, this::getBucketName, this::getObjectName);
         } catch (Exception e) {
             log.error("上传文件失败", e);
             throw new RuntimeException("上传文件失败");
@@ -156,7 +157,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
                                             .build())
                             .build()
             );
-            return this.getFileProtocol(target);
+            return this.getFileProtocol(target, this::getBucketName, this::getOriginObjectName);
         } catch (Exception e) {
             log.error("文件复制失败", e);
             throw new RuntimeException("文件复制失败");
@@ -307,15 +308,16 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
      * @param attribute
      * @return
      */
-    private String getFileProtocol(MinioAttribute attribute) {
+    private String getFileProtocol(MinioAttribute attribute, Function<MinioAttribute, String> bucketNameFun, Function<MinioAttribute, String> objectNameFunc) {
         String storageId = minioProperties.getStorageId();
         if (StringUtils.isBlank(storageId)) {
             log.warn("未配置minio的storageId,将使用默认的storageId:{}", DEFAULT_STORAGE_ID);
             storageId = DEFAULT_STORAGE_ID;
         }
-        String bucketName = StringUtils.removeStart(this.getBucketName(attribute), FILE_PROTOCOL_SPILT);
-        String objectName = StringUtils.removeStart(this.getOriginObjectName(attribute), FILE_PROTOCOL_SPILT);
+        String bucketName = StringUtils.removeStart(bucketNameFun.apply(attribute), FILE_PROTOCOL_SPILT);
+        String objectName = StringUtils.removeStart(objectNameFunc.apply(attribute), FILE_PROTOCOL_SPILT);
         return new StringBuilder(storageId).append(FILE_PROTOCOL_COLON)
                 .append(bucketName).append(FILE_PROTOCOL_SPILT).append(objectName).toString();
     }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -66,6 +67,13 @@ public class FileStorageController {
     public CommonResult<String> deleteFile(@PathVariable("id") String id) {
         fileStorageService.deleteFile(id);
         return CommonResult.success("文件删除成功");
+    }
+
+    @DeleteMapping("")
+    @ApiOperation("清理过期文件")
+    public CommonResult<String> deleteFile() {
+        fileStorageService.cleanExpireFile(LocalDateTime.now());
+        return CommonResult.success("清理过期文件");
     }
 
 }

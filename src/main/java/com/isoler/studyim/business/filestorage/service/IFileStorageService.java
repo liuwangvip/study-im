@@ -6,6 +6,8 @@ import com.isoler.studyim.business.filestorage.model.dto.FileDownloadResultDto;
 import com.isoler.studyim.business.filestorage.model.dto.FileUploadResultDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 /**
  * <p>
  * 服务类
@@ -37,4 +39,9 @@ public interface IFileStorageService extends IService<FileStorage> {
      * @param id
      */
     void deleteFile(String id);
+
+    /**
+     * 清理过期的文件
+     */
+    void cleanExpireFile(LocalDateTime now);
 }

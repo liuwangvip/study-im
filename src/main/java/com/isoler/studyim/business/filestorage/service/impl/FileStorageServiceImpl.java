@@ -27,7 +27,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -169,6 +173,23 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
         }
         this.removeById(id);
         minioStorageService.deleteFile(fileStorage.getFileProtocol());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cleanExpireFile(LocalDateTime now) {
+        QueryWrapper<FileStorage> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.select("c_file_protocol");
+        queryWrapper.lt("dt_expire_time", now);
+        final List<FileStorage> expireFileList = this.list(queryWrapper);
+        final Set<String> expireFileProtocolList = Optional.ofNullable(expireFileList).orElse(Collections.emptyList())
+                .stream().map(FileStorage::getFileProtocol).filter(StringUtils::isNotBlank)
+                .collect(Collectors.toSet());
+        if (CollectionUtils.isEmpty(expireFileProtocolList)) {
+            return;
+        }
+        this.remove(queryWrapper);
+        expireFileProtocolList.stream().forEach(minioStorageService::deleteFile);
     }
 
     /**

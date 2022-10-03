@@ -1,10 +1,13 @@
 package com.isoler.studyim.business.chatmessage.service.impl;
 
-import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
-import com.isoler.studyim.business.chatmessage.mapper.ChatMessageMapper;
-import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.isoler.studyim.business.chatmessage.mapper.ChatMessageMapper;
+import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,4 +20,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatMessage> implements IChatMessageService {
 
+    @Override
+    public void invalidMessage() {
+        baseMapper.invalidMessage();
+    }
+
+    @Override
+    public void cleanMessage(LocalDateTime localDateTime) {
+        QueryWrapper<ChatMessage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lt("dt_create_time", localDateTime);
+        this.remove(queryWrapper);
+    }
 }

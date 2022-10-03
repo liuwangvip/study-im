@@ -1,7 +1,7 @@
 package com.isoler.studyim.business.chatmessage.mapper;
 
-import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
 
 /**
  * <p>
@@ -12,5 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2022-07-28
  */
 public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
-
+    /**
+     * 设置消息失效
+     */
+    Integer invalidMessage();
 }

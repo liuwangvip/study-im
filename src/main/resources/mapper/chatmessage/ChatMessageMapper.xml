@@ -21,5 +21,13 @@
     <sql id="Base_Column_List">
         c_id, c_type, c_sender_id, c_target_id, c_target_type, c_content, c_file_id, c_file_name, c_status, dt_create_time, dt_update_time
     </sql>
+    <update id="invalidMessage">
+        update db_chat.t_chat_message chat set c_status ='2'
+        <where>
+            c_file_id is not null
+            and c_status !='2'
+            and not exists (select 1 from db_chat.t_file_storage storage where storage.c_id = chat.c_file_id)
+        </where>
+    </update>
 
 </mapper>
