@@ -26,7 +26,7 @@ public interface IFileStorageService extends IService<FileStorage> {
     /**
      * 上传文件
      *
-     * @param dto
+     * @param file
      * @return
      */
     FileUploadResultDto uploadFile(MultipartFile file);
