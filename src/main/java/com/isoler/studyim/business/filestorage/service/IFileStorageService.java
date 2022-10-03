@@ -2,11 +2,9 @@ package com.isoler.studyim.business.filestorage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.isoler.studyim.business.filestorage.model.bean.FileStorage;
-import com.isoler.studyim.business.filestorage.model.dto.FileUploadDto;
+import com.isoler.studyim.business.filestorage.model.dto.FileDownloadDto;
 import com.isoler.studyim.business.filestorage.model.dto.FileUploadResultDto;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.InputStream;
 
 /**
  * <p>
@@ -23,7 +21,7 @@ public interface IFileStorageService extends IService<FileStorage> {
      * @param id
      * @return
      */
-    InputStream downloadFile(String id);
+    FileDownloadDto downloadFile(String id);
 
     /**
      * 上传文件

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-07-28
  */
 @RestController
-@RequestMapping("//userRoom")
+@RequestMapping("userRoom")
 public class UserRoomController {
 
 }

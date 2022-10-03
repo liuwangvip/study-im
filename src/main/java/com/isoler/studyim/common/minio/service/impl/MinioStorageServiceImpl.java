@@ -4,6 +4,7 @@ import com.isoler.studyim.common.minio.config.MinioProperties;
 import com.isoler.studyim.common.minio.model.MinioAttribute;
 import com.isoler.studyim.common.minio.service.IMinioStorageService;
 import com.isoler.studyim.common.minio.util.FileTypeUtils;
+import com.isoler.studyim.common.util.FileNameUtil;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             return minioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(this.getBucketName(attribute))
-                            .object(this.getObjectName(attribute))
+                            .object(this.getOriginObjectName(attribute))
                             .build());
         } catch (Exception e) {
             log.error("获取文件流失败,MinioAttribute", e);
@@ -62,7 +63,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             minioClient.downloadObject(
                     DownloadObjectArgs.builder()
                             .bucket(this.getBucketName(attribute))
-                            .object(this.getObjectName(attribute))
+                            .object(this.getOriginObjectName(attribute))
                             .filename(path)
                             .build()
             );
@@ -82,7 +83,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder().method(Method.GET)
                             .bucket(this.getBucketName(attribute))
-                            .object(this.getObjectName(attribute))
+                            .object(this.getOriginObjectName(attribute))
                             .expiry(this.getExpire(attribute), this.getExpireUnit(attribute))
                             .extraQueryParams(reqParams)
                             .build()
@@ -105,7 +106,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(this.getBucketName(attribute))
-                            .object(this.getObjectName(attribute))
+                            .object(this.getOriginObjectName(attribute))
                             .build()
             );
         } catch (Exception e) {
@@ -147,11 +148,11 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             minioClient.copyObject(
                     CopyObjectArgs.builder()
                             .bucket(this.getBucketName(target))
-                            .object(this.getObjectName(target))
+                            .object(this.getOriginObjectName(target))
                             .source(
                                     CopySource.builder()
                                             .bucket(this.getBucketName(source))
-                                            .object(this.getObjectName(source))
+                                            .object(this.getOriginObjectName(source))
                                             .build())
                             .build()
             );
@@ -232,7 +233,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             return attribute.getFileName();
         }
         final String objectName = attribute.getObjectName();
-        return FileNameUtils.getBaseName(objectName);
+        return FileNameUtil.getName(objectName);
     }
 
     /**
@@ -313,7 +314,7 @@ public class MinioStorageServiceImpl implements IMinioStorageService {
             storageId = DEFAULT_STORAGE_ID;
         }
         String bucketName = StringUtils.removeStart(this.getBucketName(attribute), FILE_PROTOCOL_SPILT);
-        String objectName = StringUtils.removeStart(this.getObjectName(attribute), FILE_PROTOCOL_SPILT);
+        String objectName = StringUtils.removeStart(this.getOriginObjectName(attribute), FILE_PROTOCOL_SPILT);
         return new StringBuilder(storageId).append(FILE_PROTOCOL_COLON)
                 .append(bucketName).append(FILE_PROTOCOL_SPILT).append(objectName).toString();
     }

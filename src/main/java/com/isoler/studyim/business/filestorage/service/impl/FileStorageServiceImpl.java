@@ -1,17 +1,19 @@
 package com.isoler.studyim.business.filestorage.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.isoler.studyim.business.filestorage.mapper.FileStorageMapper;
 import com.isoler.studyim.business.filestorage.model.bean.FileStorage;
+import com.isoler.studyim.business.filestorage.model.dto.FileDownloadDto;
 import com.isoler.studyim.business.filestorage.model.dto.FileUploadResultDto;
 import com.isoler.studyim.business.filestorage.service.IFileStorageService;
 import com.isoler.studyim.common.minio.model.MinioAttribute;
 import com.isoler.studyim.common.minio.service.IMinioStorageService;
+import com.isoler.studyim.common.util.FileNameUtil;
 import com.isoler.studyim.common.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,20 +45,23 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
     private IMinioStorageService minioStorageService;
 
     @Override
-    public InputStream downloadFile(String id) {
+    public FileDownloadDto downloadFile(String id) {
         FileStorage fileStorage = this.getById(id);
         if (fileStorage == null || StringUtils.isBlank(fileStorage.getFileProtocol())) {
             log.error("文件下载失败，文件不存在，文件id:{}", id);
             throw new RuntimeException("文件下载失败，文件不存在");
         }
-        return minioStorageService.getInputStream(fileStorage.getFileProtocol());
+        InputStream inputStream = minioStorageService.getInputStream(fileStorage.getFileProtocol());
+        return new FileDownloadDto().setFileName(fileStorage.getFileName())
+                .setInputStream(inputStream);
+
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FileUploadResultDto uploadFile(MultipartFile file) {
         checkBeforeUpload(file);
-        String fileName = FileNameUtils.getBaseName(file.getOriginalFilename());
+        String fileName = FileNameUtil.getName(file.getOriginalFilename());
         Path path = null;
         try (InputStream inputStream = file.getInputStream()) {
             byte[] bytes = FileUtil.toByteArr(inputStream);
@@ -94,9 +99,11 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
      * @return
      */
     private FileUploadResultDto uploadFileNew(Path path, String fileName, String fileMd5) {
+        String uploadFileName = new StringBuilder(IdWorker.get32UUID())
+                .append("-").append(fileName).toString();
         MinioAttribute minioAttribute = new MinioAttribute()
                 .setFilePrePath(getDatePath())
-                .setFileName(fileName);
+                .setFileName(uploadFileName);
         final long fileSize = FileUtil.fileSize(path.toFile());
         try (InputStream ins = Files.newInputStream(path)) {
             final String fileProtocol = minioStorageService.uploadFile(ins, minioAttribute);
@@ -108,7 +115,7 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
                     .setExpireTime(LocalDateTime.now().plusDays(7));
             this.save(fileStorage);
             return new FileUploadResultDto().setFileId(fileStorage.getId())
-                    .setFileId(fileStorage.getFileName());
+                    .setFileName(fileStorage.getFileName());
         } catch (IOException e) {
             log.error("文件上传失败", e);
             throw new RuntimeException("文件上传失败,获取文件流失败");

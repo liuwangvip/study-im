@@ -14,7 +14,7 @@ public class BaseEntityExt extends BaseEntity {
     protected String creatorId;
 
     @ApiModelProperty(value = "主键")
-    @TableField(value = "c_creator_id", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "c_updator_id", fill = FieldFill.INSERT_UPDATE)
     protected String updatorId;
 
 

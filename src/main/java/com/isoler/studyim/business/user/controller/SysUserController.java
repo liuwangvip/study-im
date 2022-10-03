@@ -5,6 +5,7 @@ import com.isoler.studyim.business.user.model.bean.SysUser;
 import com.isoler.studyim.business.user.model.dto.UserDto;
 import com.isoler.studyim.business.user.service.ISysUserService;
 import com.isoler.studyim.common.api.CommonResult;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("user")
+//@Api(tags = "用户接口")
 public class SysUserController {
 
     @Resource
@@ -33,6 +35,7 @@ public class SysUserController {
      * @return
      */
     @GetMapping("name")
+    @ApiOperation("获取当前用户")
     public CommonResult<SysUser> getCurrentUser(Authentication authentication) {
         SysUser user = (SysUser) authentication.getPrincipal();
         return CommonResult.success(user);

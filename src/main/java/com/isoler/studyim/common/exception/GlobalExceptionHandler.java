@@ -1,10 +1,14 @@
 package com.isoler.studyim.common.exception;
 
+import com.google.common.collect.ImmutableList;
 import com.isoler.studyim.common.api.CommonResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +32,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 public class GlobalExceptionHandler {
+
+    private static final List<String> CONTENT_TYPE_LIST = ImmutableList.of(
+            MediaType.APPLICATION_PDF_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    ).asList();
 
     public GlobalExceptionHandler() {
         log.info("注入全局异常");
@@ -105,21 +116,20 @@ public class GlobalExceptionHandler {
      * @return
      */
     private Object handlerException(Exception e, HttpServletRequest req, CommonResult result) {
-        String contentTypeHeader = req.getHeader("Content-Type");
-        String acceptHeader = req.getHeader("Accept");
+        String contentTypeHeader = req.getHeader(HttpHeaders.CONTENT_TYPE);
+        String acceptHeader = req.getHeader(HttpHeaders.ACCEPT);
         String xRequestedWith = req.getHeader("X-Requested-With");
-        if ((contentTypeHeader != null && contentTypeHeader.contains("application/json"))
-                || (acceptHeader != null && acceptHeader.contains("application/json"))
-                || "XMLHttpRequest".equalsIgnoreCase(xRequestedWith)) {
+        if ((contentTypeHeader != null && CONTENT_TYPE_LIST.stream().anyMatch(contentTypeHeader::contains))
+                || StringUtils.contains(acceptHeader, MediaType.APPLICATION_JSON_VALUE)
+                || StringUtils.equalsIgnoreCase("XMLHttpRequest", xRequestedWith)) {
             return result;
-        } else {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.addObject("message", e.getMessage());
-            modelAndView.addObject("path", req.getRequestURL());
-            modelAndView.addObject("trace", e.getStackTrace());
-            modelAndView.setViewName("error");
-            return modelAndView;
         }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("trace", e.getStackTrace());
+        modelAndView.setViewName("error");
+        return modelAndView;
     }
-
 }
+
+

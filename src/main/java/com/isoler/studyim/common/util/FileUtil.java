@@ -53,6 +53,8 @@ public final class FileUtil {
             } catch (IOException e) {
                 log.error("文件下载失败", e);
                 throw new RuntimeException("文件下载失败");
+            }finally {
+                IOUtils.closeQuietly(file);
             }
         }, fileName);
     }
