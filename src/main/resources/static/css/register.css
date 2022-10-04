@@ -99,14 +99,16 @@ body {
     border-color: #409EFF;
 }
 
-.el-footer {
-    background-color: #475050;
-    color: #FFFFFF;
+.fd-footer {
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    font-size: 12px;
+    color: #999;
     text-align: center;
-    line-height: 40px;
+    background-color: #f5f5f5;
+    line-height: 30px;
 }
 
-.el-footer .copy-right {
+.fd-footer .copy-right {
     margin: 0px;
 }
 
