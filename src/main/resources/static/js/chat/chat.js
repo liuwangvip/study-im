@@ -2,7 +2,16 @@ var vm = new Vue({
     el: '#app',
     data: function () {
         return {
-            drawer: false,
+            /**
+             * 控制显示
+             */
+            visible: {
+                userDialog: true,
+                fileDialog: false,
+                showMoreDialog: false,
+                historyMessageDialog: false
+            },
+
             navType: "",
             /**
              * 聊天室列表
@@ -23,7 +32,7 @@ var vm = new Vue({
             currentUser: {
                 username: ''
             },
-            showUser: true,
+
             /**
              * 消息内容
              */
@@ -161,13 +170,13 @@ var vm = new Vue({
          * 打开文件
          */
         openFile: function () {
-            this.$message('开发中。。。');
+            this.visible.fileDialog = true;
         },
         /**
          * 打开消息历史
          */
         openMsgHistory: function () {
-            this.$message('开发中。。。');
+            this.visible.historyMessageDialog=true;
         },
         /**
          * 打开语音聊天
@@ -182,8 +191,8 @@ var vm = new Vue({
             this.$message('开发中。。。');
         },
         showMore: function () {
-            this.drawer = !this.drawer;
-            if (this.drawer) {
+            this.visible.showMoreDialog = !this.visible.showMoreDialog;
+            if (this.visible.showMoreDialog) {
                 this.loadUserList();
             }
         },
@@ -196,7 +205,7 @@ var vm = new Vue({
             var _this = this;
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    _this.showUser = false;
+                    _this.visible.userDialog = false;
                     _this.initWebSocket()
                 } else {
                     this.$message("用户名不能为空");
@@ -299,8 +308,13 @@ var vm = new Vue({
                 JSON.stringify(chatMessage)
             )
             this.messageContent = "";
-        }
-        ,
+        },
+        /**
+         * 发送文件
+         */
+        sendFile: function () {
+            this.$message("开发中。。。")
+        },
         /**
          * 连接失败
          */
@@ -333,7 +347,7 @@ var vm = new Vue({
             var _this = this;
             axios.get("user/name").then(function (res) {
                 if (res.data.success) {
-                    _this.showUser = false;
+                    _this.visible.userDialog = false;
                     _this.currentUser = res.data.result;
                     _this.initWebSocket();
                 }
