@@ -1,4 +1,4 @@
-package com.isoler.studyim.common.model;
+package com.isoler.studyim.common.websocket.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

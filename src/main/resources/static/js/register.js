@@ -27,7 +27,7 @@ var vm = new Vue({
                 password2: '',
             },
             config: {
-                headers: {"Content-Type": "application/json;charset=UTF-8"}
+                headers: {"Content-Type": "multipart/form-data"}
             },
             rules: {
                 username: [

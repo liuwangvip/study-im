@@ -11,7 +11,6 @@ var vm = new Vue({
                 showMoreDialog: false,
                 historyMessageDialog: false
             },
-
             navType: "",
             /**
              * 聊天室列表
@@ -29,37 +28,51 @@ var vm = new Vue({
              * 搜索人员
              */
             searchUserListText: "",
+            /**
+             * 当前用户信息
+             */
             currentUser: {
                 username: ''
             },
-
-            /**
-             * 消息内容
-             */
-            messageContent: "",
-            colors: [
-                '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-                '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
-            ],
-            //消息列表
-            messageList: [
-                {
-                    sender: "超管",
-                    content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
-                    type: "CHAT",
-                    style: {"background-color": '#2196F3'},
-                    date: moment().format('YYYY-MM-DD HH:mm:ss')
-                },
-            ],
+            rules: {
+                username: [
+                    {required: true, message: '请输入用户名', trigger: 'blur'},
+                ]
+            },
             stompClient: null,
             timer: '',
             serverUrl: '',
             headers: {},
             connecting: true,
-            rules: {
-                username: [
-                    {required: true, message: '请输入用户名', trigger: 'blur'},
-                ]
+            chat: {
+                colors: [
+                    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
+                    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
+                ],
+                //消息列表
+                messageList: [
+                    {
+                        senderName: "超管",
+                        content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
+                        type: "1",
+                        style: {"background-color": '#2196F3'},
+                        sendDate: moment().format('YYYY-MM-DD HH:mm:ss')
+                    },
+                ],
+                /**
+                 * 待发送消息的消息内容
+                 */
+                msgContent: "",
+                /**
+                 * 待发送的文件
+                 */
+                sendFile: {
+                    disabled: false,
+                    show: false,
+                    fileName: "测试文件0001.docx",
+                    fileId: "dafdsfasd"
+                },
+
             }
         }
     },
@@ -173,10 +186,62 @@ var vm = new Vue({
             this.visible.fileDialog = true;
         },
         /**
+         * 对上传的文件进行限制
+         * @param file
+         */
+        checkUploadFile: function (file) {
+            console.log("处理文件之前的校验", file);
+            var size200M = 1024 * 1024 * 200;
+            if (file.size > size200M) {
+                this.$message.error('上传文件大小不能超过 200MB!');
+                return false;
+            }
+            return true;
+        },
+        /**
+         * 文件上传成功
+         * @param res
+         * @param file
+         * @param fileList
+         */
+        handleFileSuccess: function (res, file, fileList) {
+            debugger;
+            this.$message({type: "success", message: "文件上传成功"});
+            this.showChatSendFile(res);
+        },
+        /**
+         * 显示上传的文件
+         * @param res
+         */
+        showChatSendFile: function (res) {
+            this.chat.sendFile.show = true;
+            this.chat.sendFile.disabled = true;
+            this.chat.sendFile.fileName = res.result.fileName;
+            this.chat.sendFile.fileId = res.result.fileId;
+        },
+        /**
+         * 处理文件上传失败
+         * @param res
+         * @param file
+         * @param fileList
+         */
+        handleFileFail: function (res, file, fileList) {
+            this.$message.error(res.message || "文件上传失败，请联系管理员");
+        },
+        /**
+         * 删除待发送的文件
+         */
+        deleteSendFile: function () {
+            this.chat.sendFile.show = false;
+            this.chat.sendFile.disabled = false;
+            this.chat.sendFile.fileName = "";
+            this.chat.sendFile.fileId = "";
+        },
+        /**
          * 打开消息历史
          */
         openMsgHistory: function () {
-            this.visible.historyMessageDialog=true;
+            this.visible.historyMessageDialog = true;
         },
         /**
          * 打开语音聊天
@@ -218,8 +283,8 @@ var vm = new Vue({
             for (var i = 0; i < messageSender.length; i++) {
                 hash = 31 * hash + messageSender.charCodeAt(i);
             }
-            var index = Math.abs(hash % this.colors.length);
-            return this.colors[index];
+            var index = Math.abs(hash % this.chat.colors.length);
+            return this.chat.colors[index];
         },
         /**
          * 初始化websocket连接
@@ -253,12 +318,12 @@ var vm = new Vue({
             }
             // 向服务器发起websocket连接
             this.stompClient.connect(this.headers, this.onConnectSuccess, this.onConnectError);
-        }
-        ,
+        },
         /**
          * 链接成功
          */
         onConnectSuccess: function () {
+            debugger;
             this.connecting = false;
             /**
              * 订阅服务器发给topic/public的消息
@@ -267,23 +332,24 @@ var vm = new Vue({
             this.stompClient.send("/app/chat.addUser",
                 this.headers,
                 JSON.stringify({
-                    sender: this.currentUser.username,
-                    type: 'NOTICE',
+                    senderId: this.currentUser.id,
+                    senderName: this.currentUser.username,
+                    type: '2.2',
                     content: this.currentUser.username + " 上线",
-                    date: moment().format('YYYY-MM-DD HH:mm:ss')
+                    createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
             )
-        }
-        ,
+        },
         /**
          * 接收服务器消息
          * @param payload
          */
         onMessageReceived: function (payload) {
+            console.log("接收消息：", payload);
             var _this = this;
             let message = JSON.parse(payload.body);
-            message.style = {"background-color": this.getAvatarColor(message.sender)};
-            this.messageList.push(message);
+            message.style = {"background-color": this.getAvatarColor(message.senderName)};
+            this.chat.messageList.push(message);
             this.$nextTick(() => {
                 _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
             })
@@ -293,21 +359,25 @@ var vm = new Vue({
          * 发送websocket消息
          */
         sendMessage: function () {
-            if (this.messageContent == "") {
+            if (this.chat.msgContent == "" && this.chat.sendFile.fileId == "") {
                 this.$notify({title: '提示', message: '消息内容不能为空', type: 'warning'});
                 return;
             }
             var chatMessage = {
+                senderId: this.currentUser.id,
+                senderName: this.currentUser.username,
                 sender: this.currentUser.username,
-                content: this.messageContent,
-                date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                type: 'CHAT'
+                fileId: this.chat.sendFile.fileId,
+                fileName: this.chat.sendFile.fileName,
+                content: this.chat.msgContent,
+                type: "1"
             };
-            this.stompClient.send("/app/chat.sendMessage",
+            this.stompClient.send("/app/public.sendMessage",
                 this.headers,
                 JSON.stringify(chatMessage)
             )
-            this.messageContent = "";
+            this.chat.msgContent = "";
+            this.deleteSendFile();
         },
         /**
          * 发送文件

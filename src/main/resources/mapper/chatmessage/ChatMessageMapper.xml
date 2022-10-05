@@ -7,6 +7,7 @@
         <id column="c_id" property="id" />
         <result column="c_type" property="type" />
         <result column="c_sender_id" property="senderId" />
+        <result column="c_sender_name" property="senderName" />
         <result column="c_target_id" property="targetId" />
         <result column="c_target_type" property="targetType" />
         <result column="c_content" property="content" />
@@ -19,7 +20,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        c_id, c_type, c_sender_id, c_target_id, c_target_type, c_content, c_file_id, c_file_name, c_status, dt_create_time, dt_update_time
+        c_id, c_type, c_sender_id, c_sender_name, c_target_id, c_target_type, c_content, c_file_id, c_file_name, c_status, dt_create_time, dt_update_time
     </sql>
     <update id="invalidMessage">
         update db_chat.t_chat_message chat set c_status ='2'

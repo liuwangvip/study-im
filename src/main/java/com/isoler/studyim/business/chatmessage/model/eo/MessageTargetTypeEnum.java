@@ -13,6 +13,10 @@ public enum MessageTargetTypeEnum {
     /**
      * 群发-群聊
      */
-    ALL("2");
+    GROUP("2"),
+    /**
+     * 广播消息
+     */
+    BROADCAST("3");
     private String type;
 }

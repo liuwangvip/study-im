@@ -1,4 +1,4 @@
-package com.isoler.studyim.common.config;
+package com.isoler.studyim.common.websocket.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

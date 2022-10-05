@@ -37,6 +37,10 @@ public class ChatMessage extends BaseEntity {
     @TableField("c_sender_id")
     private String senderId;
 
+    @ApiModelProperty(value = "消息发送者名称")
+    @TableField("c_sender_name")
+    private String senderName;
+
     @TableField("c_target_id")
     private String targetId;
 
@@ -45,7 +49,7 @@ public class ChatMessage extends BaseEntity {
     private String content;
 
     @ApiModelProperty(value = "文件id")
-    @TableField("c_fileId")
+    @TableField("c_file_id")
     private String fileId;
 
     @ApiModelProperty(value = "文件名称")
@@ -55,5 +59,9 @@ public class ChatMessage extends BaseEntity {
     @ApiModelProperty(value = "消息是否失效,默认有效")
     @TableField("c_status")
     private String status = MessageStatusEnum.VALID.getStatus();
+
+    @ApiModelProperty(value = "消息发送时间")
+    @TableField(exist = false)
+    public String sendDate;
 
 }

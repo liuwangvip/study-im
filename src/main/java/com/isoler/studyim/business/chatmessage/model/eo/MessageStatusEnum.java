@@ -7,7 +7,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MessageStatusEnum {
+    /**
+     * 有效
+     */
     VALID("1"),
+    /**
+     * 失效
+     */
     INVALID("2");
     private String status;
 }

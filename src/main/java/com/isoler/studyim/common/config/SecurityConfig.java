@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //禁用跨域保护
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/register-save", "/error")
+                .antMatchers("/login", "/register", "/user/register", "/error")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

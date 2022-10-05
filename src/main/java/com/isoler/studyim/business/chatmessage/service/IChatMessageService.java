@@ -21,7 +21,15 @@ public interface IChatMessageService extends IService<ChatMessage> {
 
     /**
      * 清理消息
+     *
      * @param localDateTime
      */
     void cleanMessage(LocalDateTime localDateTime);
+
+    /**
+     * 发送广播消息
+     *
+     * @param chatMessage
+     */
+    void sendPublicMessage(ChatMessage chatMessage);
 }

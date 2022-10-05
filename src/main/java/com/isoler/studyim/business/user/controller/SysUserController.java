@@ -43,7 +43,8 @@ public class SysUserController {
     }
 
     @PostMapping("register")
-    public CommonResult<SysUser> register(@RequestBody @Valid UserDto dto) {
+    @ApiOperation("注册用户")
+    public CommonResult<SysUser> register(@Valid UserDto dto) {
         return CommonResult.success(sysUserService.register(dto));
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.isoler.studyim.business.user.model.bean.SysUser;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -41,10 +42,16 @@ public class AutoFillObjectHandler implements MetaObjectHandler {
         if (context.getAuthentication() == null) {
             return null;
         }
+        if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
         if (context.getAuthentication().getPrincipal() == null) {
             return null;
         }
-        return (SysUser) context.getAuthentication().getPrincipal();
+        if (context.getAuthentication().getPrincipal() instanceof SysUser) {
+            return (SysUser) context.getAuthentication().getPrincipal();
+        }
+        return null;
     }
 
     /**

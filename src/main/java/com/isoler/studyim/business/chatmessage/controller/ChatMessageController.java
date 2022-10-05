@@ -1,15 +1,17 @@
 package com.isoler.studyim.business.chatmessage.controller;
 
 
-import com.isoler.studyim.common.model.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -25,20 +27,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("")
 public class ChatMessageController {
 
+    @Resource
+    private IChatMessageService chatMessageService;
 
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    /**
+     * 发送广播消息
+     *
+     * @param chatMessage 消息内容
+     * @return
+     */
+    @MessageMapping("/public.sendMessage")
+    public ChatMessage sendPublicMessage(@Payload ChatMessage chatMessage) {
+        chatMessageService.sendPublicMessage(chatMessage);
         return chatMessage;
     }
 
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage,
-                               SimpMessageHeaderAccessor headerAccessor) {
-        log.info("User added in Chatroom:" + chatMessage.getSender());
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+    public ChatMessage addUser(@Payload ChatMessage chatMessage) {
+        log.info("提示，进入群聊:" + chatMessage.getSenderName());
         return chatMessage;
     }
+
 
 }

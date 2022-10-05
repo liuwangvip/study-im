@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.isoler.studyim.business.chatmessage.mapper.ChatMessageMapper;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.eo.MessageStatusEnum;
+import com.isoler.studyim.business.chatmessage.model.eo.MessageTargetTypeEnum;
+import com.isoler.studyim.business.chatmessage.model.eo.MessageTypeEnum;
 import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**
@@ -20,6 +25,9 @@ import java.time.LocalDateTime;
 @Service
 public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatMessage> implements IChatMessageService {
 
+    @Resource
+    private SimpMessageSendingOperations messagingTemplate;
+
     @Override
     public void invalidMessage() {
         baseMapper.invalidMessage();
@@ -30,5 +38,15 @@ public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatM
         QueryWrapper<ChatMessage> queryWrapper = new QueryWrapper<>();
         queryWrapper.lt("dt_create_time", localDateTime);
         this.remove(queryWrapper);
+    }
+
+    @Override
+    public void sendPublicMessage(ChatMessage chatMessage) {
+        chatMessage
+                .setStatus(MessageStatusEnum.VALID.getStatus())
+                .setTargetType(MessageTargetTypeEnum.BROADCAST.getType())
+                .setType(MessageTypeEnum.CHAT.getType());
+        this.save(chatMessage);
+        messagingTemplate.convertAndSend("/topic/public", chatMessage);
     }
 }
