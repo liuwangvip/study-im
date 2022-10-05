@@ -13,18 +13,6 @@
     <noscript>
         <h2>抱歉，您的浏览器不支持websocket,请升级浏览器版本</h2>
     </noscript>
-    <div class="fd-user-page-container" v-show="visible.userDialog">
-        <el-form :model="currentUser" :rules="rules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="昵称：" prop="name">
-                <el-input v-model="currentUser.username" placeholder="请输入姓名"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" style="background-color: #ff4743;color: #fff;border-color:#ff4743; "
-                           @click="enterChat('userInfoForm')">进入聊天室
-                </el-button>
-            </el-form-item>
-        </el-form>
-    </div>
 
     <el-container>
         <el-header class="fd-head" height="40px">
@@ -156,7 +144,7 @@
                     </el-header>
                     <el-main class="fd-chat-main-container" style="margin-bottom: 20px">
                         <div class="fd-chat-main" ref="fd_chat_main">
-                            <div class="fd-chat-content-item" v-for="(message,index) in chat.messageList" :key="index">
+                            <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
                                 <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
                                     <div class="chat-notice-text">
                                         <span>{{message.content}}</span>
@@ -268,7 +256,7 @@
                                 </div>
                             </div>
                             <div class="fd-send-file">
-                                <li v-show ="chat.sendFile.show" class="el-upload-list__item is-success">
+                                <li v-show="chat.sendFile.show" class="el-upload-list__item is-success">
                                     <a class="el-upload-list__item-name"><i class="el-icon-document"></i>
                                         {{chat.sendFile.fileName}}
                                     </a>
@@ -344,8 +332,52 @@
         </div>
     </el-drawer>
 
-    <el-dialog title="历史消息" :visible.sync="visible.historyMessageDialog" width="30%" center>
-        <span>TODO</span>
+    <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="600px" height="80%" center>
+        <el-container class="fd-history-chat-main" ref="fd_history_chat_main">
+            <el-header class="fd-user-search" height="40px">
+                <el-input @keyup.enter.native="searchHistoryMessage" size="mini"
+                          prefix-icon="el-icon-search"
+                          placeholder="搜索" v-model="chat.historyMessage.searchText"
+                          class="input-with-select">
+                </el-input>
+            </el-header>
+            <el-main class="fd-chat-content-container">
+                <div class="fd-chat-content-item" v-for="(message,index) in chat.historyMessage.data" :key="index">
+                    <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
+                        <div class="chat-notice-text">
+                            <span>{{message.content}}</span>
+                            <span style="padding-left: 5px">{{message.createTime}}</span>
+                        </div>
+                    </div>
+                    <div class="fd-chat-message" v-else>
+                        <div :style="message.style" class="fd-chat-message-pic">
+                            {{message.senderName[0]}}
+                        </div>
+                        <div class="fd-chat-message-content">
+                            <div class="fd-chat-message-content-xm">
+                                <span>{{message.senderName}}</span>
+                                <span class="fd-chat-message-content-date">{{message.createTime}}</span>
+                            </div>
+                            <div class="fd-chat-message-content-text">
+                                {{message.content}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-main>
+            <el-footer style="text-align: center" height="30px">
+                <el-pagination
+                        small="true"
+                        @size-change="handleHistoryMessageSizeChange"
+                        @current-change="handleHistoryMessagePageChange"
+                        :current-page="chat.historyMessage.page"
+                        :page-sizes="[10, 20, 50]"
+                        :page-size="chat.historyMessage.pageSize"
+                        layout="total, prev, pager, next, sizes"
+                        :total="400">
+                </el-pagination>
+            </el-footer>
+        </el-container>
     </el-dialog>
 </div>
 </body>

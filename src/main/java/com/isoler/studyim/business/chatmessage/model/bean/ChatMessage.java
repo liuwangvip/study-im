@@ -60,8 +60,7 @@ public class ChatMessage extends BaseEntity {
     @TableField("c_status")
     private String status = MessageStatusEnum.VALID.getStatus();
 
-    @ApiModelProperty(value = "消息发送时间")
-    @TableField(exist = false)
-    public String sendDate;
+
+
 
 }
