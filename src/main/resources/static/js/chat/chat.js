@@ -286,7 +286,6 @@ var vm = new Vue({
          * @param fileList
          */
         handleFileSuccess: function (res, file, fileList) {
-            debugger;
             this.$message({type: "success", message: "文件上传成功"});
             this.showChatSendFile(res);
         },
