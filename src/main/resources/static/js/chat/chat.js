@@ -144,7 +144,6 @@ var vm = new Vue({
     },
     watch: {
         navType: function (newVal, oldVal) {
-            console.log(newVal, oldVal);
             switch (newVal) {
                 case 'userList':
                     this.loadUserList();
@@ -314,10 +313,19 @@ var vm = new Vue({
          * 删除待发送的文件
          */
         deleteSendFile: function () {
-            this.chat.sendFile.show = false;
-            this.chat.sendFile.disabled = false;
-            this.chat.sendFile.fileName = "";
-            this.chat.sendFile.fileId = "";
+            var _this = this;
+            axios.delete("file/" + this.chat.sendFile.fileId).then(function (res) {
+                console.log("文件删除成功", res);
+                _this.chat.sendFile.show = false;
+                _this.chat.sendFile.disabled = false;
+                _this.chat.sendFile.fileName = "";
+                _this.chat.sendFile.fileId = "";
+                _this.$message({message: "文件删除成功", type: 'success'});
+            }).catch(function (e) {
+                console.log("文件删除失败", e);
+                _this.$message.error("文件删除失败，请联系管理员");
+            });
+
         },
         /**
          * 打开消息历史
@@ -460,10 +468,8 @@ var vm = new Vue({
             let that = this;
             // 断开重连机制,尝试发送消息,捕获异常发生时重连
             this.timer = setInterval(() => {
-                try {
-                    that.stompClient.send("test");
-                } catch (err) {
-                    this.$message("断线重连");
+                if (that.connectStatus == "3" || that.connectStatus == "4") {
+                    this.$message("尝试断线重连");
                     that.connect(that.serverUrl);
                 }
             }, 5000);
@@ -593,11 +599,11 @@ var vm = new Vue({
             var _this = this;
             axios.get("user/name").then(function (res) {
                 if (res.data.success) {
+                    console.log("获取登录用户成功", res.data.result.username);
                     _this.visible.userDialog = false;
                     _this.currentUser = res.data.result;
                     _this.initWebSocket();
                 }
-                console.log(res);
             }).catch(function (err) {
 
             });

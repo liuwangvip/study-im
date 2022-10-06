@@ -143,7 +143,7 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
         newFileStorage.setExpireTime(LocalDateTime.now().plusDays(7));
         this.save(newFileStorage);
         return new FileUploadResultDto().setFileId(newFileStorage.getId())
-                .setFileId(fileName);
+                .setFileName(fileName);
     }
 
     /**
@@ -172,14 +172,13 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
             throw new RuntimeException("文件删除失败，文件不存在");
         }
         this.removeById(id);
-        minioStorageService.deleteFile(fileStorage.getFileProtocol());
+//        minioStorageService.deleteFile(fileStorage.getFileProtocol());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void cleanExpireFile(LocalDateTime now) {
         QueryWrapper<FileStorage> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.select("c_file_protocol");
         queryWrapper.lt("dt_expire_time", now);
         final List<FileStorage> expireFileList = this.list(queryWrapper);
         final Set<String> expireFileProtocolList = Optional.ofNullable(expireFileList).orElse(Collections.emptyList())
