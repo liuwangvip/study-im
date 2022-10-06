@@ -109,8 +109,8 @@ var vm = new Vue({
                 sendFile: {
                     disabled: false,
                     show: false,
-                    fileName: "测试文件0001.docx",
-                    fileId: "dafdsfasd"
+                    fileName: "",
+                    fileId: ""
                 },
 
             }
