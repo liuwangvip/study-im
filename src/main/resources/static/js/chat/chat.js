@@ -376,8 +376,15 @@ var vm = new Vue({
          * @param messageSender
          * @returns {{"background-color": string}}
          */
-        getAvatarStyle: function (messageSender) {
-            return {"background-color": this.getAvatarColor(messageSender)}
+        getAvatarStyle: function (message) {
+            var style = {};
+            if (this.currentUser.username != message.senderName) {
+                style['left'] = "10px";
+            } else {
+                style['right'] = "10px";
+            }
+            style['background-color'] = this.getAvatarColor(message.senderName);
+            return style;
         },
         /**
          * 初始化websocket连接
@@ -442,7 +449,9 @@ var vm = new Vue({
             let message = JSON.parse(payload.body);
             this.chat.message.data.push(message);
             this.$nextTick(() => {
-                _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
+                if (_this.$refs.fd_chat_main.scrollHeight) {
+                    _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
+                }
             })
         }
         ,

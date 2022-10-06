@@ -142,23 +142,26 @@
                             </svg>
                         </div>
                     </el-header>
-                    <el-main class="fd-chat-main-container" style="margin-bottom: 20px">
-                        <div class="fd-chat-main" ref="fd_chat_main">
-                            <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
-                                <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
-                                    <div class="chat-notice-text">
-                                        <span>{{message.content}}</span>
-                                        <span style="padding-left: 5px">{{message.createTime}}</span>
-                                    </div>
+                    <el-main class="fd-chat-main" ref="fd_chat_main" style="margin-bottom: 20px">
+                        <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
+                            <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
+                                <div class="chat-notice-text">
+                                    <span>{{message.content}}</span>
+                                    <span style="padding-left: 5px">{{message.createTime}}</span>
                                 </div>
-                                <div class="fd-chat-message" v-else>
-                                    <div :style="getAvatarStyle(message.senderName)" class="fd-chat-message-pic">
+                            </div>
+                            <div class="fd-chat-message" v-else>
+                                <div class="fd-chat-message-left"
+                                     :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                    <div :style="getAvatarStyle(message)" class="fd-chat-message-avatar">
                                         {{message.senderName[0]}}
                                     </div>
-                                    <div class="fd-chat-message-content">
-                                        <div class="fd-chat-message-content-xm">
+
+                                    <div class="fd-chat-message-content"
+                                         :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
+                                        <div class="fd-chat-message-title" :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
                                             <span>{{message.senderName}}</span>
-                                            <span class="fd-chat-message-content-date">{{message.createTime}}</span>
+                                            <span class="fd-chat-message-title-date">{{message.createTime}}</span>
                                         </div>
                                         <div class="fd-chat-message-content-text">
                                             {{message.content}}
@@ -333,15 +336,15 @@
     </el-drawer>
 
     <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="600px" height="80%" center>
-        <el-container class="fd-history-chat-main" ref="fd_history_chat_main">
-            <el-header class="fd-user-search" height="40px">
+        <el-container class="fd-history-chat-container">
+            <el-header class="fd-history-chat-header" height="40px">
                 <el-input @keyup.enter.native="searchHistoryMessage" size="mini"
                           prefix-icon="el-icon-search"
                           placeholder="搜索" v-model="chat.historyMessage.searchText"
                           class="input-with-select">
                 </el-input>
             </el-header>
-            <el-main class="fd-chat-content-container">
+            <el-main class="fd-history-chat-main" ref="fd_history_chat_main">
                 <div class="fd-chat-content-item" v-for="(message,index) in chat.historyMessage.data" :key="index">
                     <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
                         <div class="chat-notice-text">
@@ -350,16 +353,21 @@
                         </div>
                     </div>
                     <div class="fd-chat-message" v-else>
-                        <div :style="getAvatarStyle(message.senderName)" class="fd-chat-message-pic">
-                            {{message.senderName[0]}}
-                        </div>
-                        <div class="fd-chat-message-content">
-                            <div class="fd-chat-message-content-xm">
-                                <span>{{message.senderName}}</span>
-                                <span class="fd-chat-message-content-date">{{message.createTime}}</span>
+                        <div class="fd-chat-message-left"
+                             :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                            <div :style="getAvatarStyle(message)" class="fd-chat-message-avatar">
+                                {{message.senderName[0]}}
                             </div>
-                            <div class="fd-chat-message-content-text">
-                                {{message.content}}
+
+                            <div class="fd-chat-message-content"
+                                 :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
+                                <div class="fd-chat-message-title" :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                    <span>{{message.senderName}}</span>
+                                    <span class="fd-chat-message-title-date">{{message.createTime}}</span>
+                                </div>
+                                <div class="fd-chat-message-content-text">
+                                    {{message.content}}
+                                </div>
                             </div>
                         </div>
                     </div>
