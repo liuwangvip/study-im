@@ -56,7 +56,6 @@ var vm = new Vue({
                             senderName: "超管",
                             content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                     ],
@@ -80,49 +79,42 @@ var vm = new Vue({
                             senderName: "超管",
                             content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "你好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "我好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "大家好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "都很好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "都很好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                         {
                             senderName: "超管",
                             content: "都很好",
                             type: "1",
-                            style: {"background-color": '#2196F3'},
                             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                         },
                     ]
@@ -366,6 +358,11 @@ var vm = new Vue({
                 }
             });
         },
+        /**
+         * 获取头像的颜色
+         * @param messageSender
+         * @returns {string}
+         */
         getAvatarColor: function (messageSender) {
             var hash = 0;
             for (var i = 0; i < messageSender.length; i++) {
@@ -373,6 +370,14 @@ var vm = new Vue({
             }
             var index = Math.abs(hash % this.chat.colors.length);
             return this.chat.colors[index];
+        },
+        /**
+         * 获取头像的样式
+         * @param messageSender
+         * @returns {{"background-color": string}}
+         */
+        getAvatarStyle: function (messageSender) {
+            return {"background-color": this.getAvatarColor(messageSender)}
         },
         /**
          * 初始化websocket连接
@@ -435,7 +440,6 @@ var vm = new Vue({
             console.log("接收消息：", payload);
             var _this = this;
             let message = JSON.parse(payload.body);
-            message.style = {"background-color": this.getAvatarColor(message.senderName)};
             this.chat.message.data.push(message);
             this.$nextTick(() => {
                 _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
@@ -457,8 +461,7 @@ var vm = new Vue({
                 fileId: this.chat.sendFile.fileId,
                 fileName: this.chat.sendFile.fileName,
                 content: this.chat.msgContent,
-                type: "1",
-                style: {backgroundColor: getAvatarColor(this.currentUser.username)}
+                type: "1"
             };
             this.stompClient.send("/app/public.sendMessage",
                 this.headers,

@@ -152,7 +152,7 @@
                                     </div>
                                 </div>
                                 <div class="fd-chat-message" v-else>
-                                    <div :style="message.style" class="fd-chat-message-pic">
+                                    <div :style="getAvatarStyle(message.senderName)" class="fd-chat-message-pic">
                                         {{message.senderName[0]}}
                                     </div>
                                     <div class="fd-chat-message-content">
@@ -350,7 +350,7 @@
                         </div>
                     </div>
                     <div class="fd-chat-message" v-else>
-                        <div :style="message.style" class="fd-chat-message-pic">
+                        <div :style="getAvatarStyle(message.senderName)" class="fd-chat-message-pic">
                             {{message.senderName[0]}}
                         </div>
                         <div class="fd-chat-message-content">

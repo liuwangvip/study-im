@@ -2,6 +2,46 @@ spring:
   thymeleaf:
     cache: false
   datasource:
+    druid:
+      stat-view-servlet:
+        # 是否开启 statViewServlet
+        enabled: true
+        allow: ""
+        login-username: admin
+        login-password: admin
+        url-pattern: /durid/*
+      # 初始连接数
+      initial-size: 10
+      # 最大连接数
+      max-active: 10
+      # 最小连接数
+      min-idle: 10
+      # 获取连接的最大等待时间
+      max-wait: -1
+      # 一个连接在连接池中的最小生存时间，单位毫秒，默认 30分钟
+      min-evictable-idle-time-millis: 1800000
+      # 多久进行一个检测需要关闭的空闲连接，单位毫秒，默认1分钟
+      time-between-eviction-runs-millis: 60000
+      # 配置扩展插件： stat -监控统计， log4j-日志， wall-防火墙（防止sql注入）
+      filters: stat
+      # 检测连接是否有效的sql语句
+      validation-query: select 1
+      # 申请连接时执行validateQuery 检测连接是否有效，默认false，开启会降低性能
+      test-on-borrow: true
+      # 归还连接时执行validateQuery 检测连接是否有效，默认false，开启会降低性能
+      test-on-return: false
+      # 申请连接时间如果大于timeBetweenEvictionRunMillis，执行validataQuery检测连接是否有效，默认false
+      test-while-idle: true
+      filter:
+        stat:
+          # 是否开启filterStat 默认true
+          enabled: true
+          # 是否记录慢sql，默认false
+          log-slow-sql: true
+          # 慢sql的标准，默认3s,单位：毫秒
+          slow-sql-millis: 3000
+          # 合并多个连接池的数据
+          merge-sql: false
     dynamic:
       primary: master
       datasource:
@@ -10,6 +50,11 @@ spring:
           username: sa
           driver-class-name: org.postgresql.Driver
           url: jdbc:postgresql://127.0.0.1:5432/isoler
+          # 连接池的名称
+          pool-name: db-iosler-ds
+          druid:
+            # 模式名
+            schema: db_chat
       lazy: true
 
 # minio 存储配置

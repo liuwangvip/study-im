@@ -68,8 +68,8 @@ public class WebSocketEventListener {
         log.info(String.format("%s %s", sysUser.getUsername(), "离开"));
         ChatMessage chatMessage = new ChatMessage()
                 .setType(MessageTypeEnum.NOTICE_ENTER_OUT.getType())
-                .setContent(String.format("%s %s", sysUser.getUsername(), "离开"))
-                .setSendDate(DateUtil.toString(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss"));
+                .setContent(String.format("%s %s", sysUser.getUsername(), "离开"));
+        chatMessage.setCreateTime(DateUtil.toDate(LocalDateTime.now()));
         messagingTemplate.convertAndSend("/topic/public", chatMessage);
     }
 
