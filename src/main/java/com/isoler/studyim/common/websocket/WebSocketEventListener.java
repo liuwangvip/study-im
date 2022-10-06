@@ -17,6 +17,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import javax.annotation.Resource;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
@@ -27,6 +28,8 @@ public class WebSocketEventListener {
      */
     public static final String SUPER_ADMIN_SENDER_ID = "superAdmin";
     public static final String SUPER_ADMIN_SENDER_NAME = "超级管理员";
+
+    private AtomicLong onlineCount = new AtomicLong(0);
 
     @Resource
     private SimpMessageSendingOperations messagingTemplate;
@@ -42,6 +45,8 @@ public class WebSocketEventListener {
             return;
         }
         log.info(String.format("%s %s", sysUser.getUsername(), "进入"));
+        onlineCount.getAndIncrement();
+        messagingTemplate.convertAndSend("/topic/online", onlineCount.get());
         sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.ON_LINE.getStatus());
     }
 
@@ -66,6 +71,8 @@ public class WebSocketEventListener {
             return;
         }
         log.info(String.format("%s %s", sysUser.getUsername(), "离开"));
+        onlineCount.getAndDecrement();
+        messagingTemplate.convertAndSend("/topic/online", onlineCount.get());
         sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.OFF_LINE.getStatus());
         ChatMessage chatMessage = new ChatMessage()
                 .setType(MessageTypeEnum.NOTICE_ENTER_OUT.getType())
