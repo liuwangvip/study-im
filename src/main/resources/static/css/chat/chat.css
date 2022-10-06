@@ -508,6 +508,7 @@ body {
  * 历史消息区域-底部
  */
 .fd-history-chat-container .fd-history-chat-footer {
+    padding: 10px 20px !important;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     text-align: center;
 }
