@@ -43,7 +43,7 @@ var vm = new Vue({
             timer: '',
             serverUrl: '',
             headers: {},
-            connecting: true,
+            connectStatus: "",
             chat: {
                 colors: [
                     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -408,6 +408,7 @@ var vm = new Vue({
          * @param event
          */
         connect: function (remoteUrl) {
+            this.connectStatus = "1";
             // 建立连接对象
             let socket = new SockJS(remoteUrl + '/ws');
             // 获取STOMP子协议的客户端对象
@@ -423,7 +424,7 @@ var vm = new Vue({
          * 链接成功
          */
         onConnectSuccess: function () {
-            this.connecting = false;
+            this.connectStatus = "2";
             /**
              * 订阅服务器发给topic/public的消息
              */
@@ -489,6 +490,7 @@ var vm = new Vue({
          * 连接失败
          */
         onConnectError: function (err) {
+            this.connectStatus = "3";
             this.$notify({title: '提示', message: '连接服务器失败', type: 'error'});
         },
         /**
@@ -497,6 +499,7 @@ var vm = new Vue({
         disconnect: function () {
             if (this.stompClient) {
                 this.stompClient.disconnect();
+                this.connectStatus = "4";
                 this.$notify({title: '提示', message: '断开连接', type: 'info'});
             }
         },

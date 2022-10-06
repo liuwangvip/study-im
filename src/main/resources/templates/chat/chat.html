@@ -132,7 +132,15 @@
                 <el-container class="fd-chat-container">
                     <el-header class="fd-chat-header">
                         <div class="fd-chat-title">
-                            群聊(22)
+                            <span>群聊</span>
+                            <span>(22)</span>
+
+                        </div>
+                        <div style="line-height: 20px;>
+                            <el-alert v-if="connectStatus=='1'" title="连接中..." show-icon center type="info" :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='2'" title="连接成功" show-icon center type="success" :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='3'" title="连接失败" show-icon center type="error" :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='4'" title="连接断开" show-icon center type="warn" :closable="false"></el-alert>
                         </div>
                         <div class="fd-chat-more" @click="showMore">
                             <svg t="1664568892984" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -159,7 +167,8 @@
 
                                     <div class="fd-chat-message-content"
                                          :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
-                                        <div class="fd-chat-message-title" :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                        <div class="fd-chat-message-title"
+                                             :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
                                             <span>{{message.senderName}}</span>
                                             <span class="fd-chat-message-title-date">{{message.createTime}}</span>
                                         </div>
@@ -361,7 +370,8 @@
 
                             <div class="fd-chat-message-content"
                                  :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
-                                <div class="fd-chat-message-title" :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                <div class="fd-chat-message-title"
+                                     :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
                                     <span>{{message.senderName}}</span>
                                     <span class="fd-chat-message-title-date">{{message.createTime}}</span>
                                 </div>
