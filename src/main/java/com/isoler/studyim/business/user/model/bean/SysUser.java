@@ -48,6 +48,10 @@ public class SysUser extends BaseEntity implements UserDetails {
     @TableField("c_status")
     private String status;
 
+    @ApiModelProperty(value = "在线状态")
+    @TableField("c_online_status")
+    private String onlineStatus;
+
     @TableField(exist = false)
     private List<SimpleGrantedAuthority> authorityList;
 

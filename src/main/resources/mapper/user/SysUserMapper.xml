@@ -8,6 +8,7 @@
         <result column="c_username" property="username" />
         <result column="c_password" property="password" />
         <result column="c_status" property="status" />
+        <result column="c_online_status" property="onlineStatus"/>
         <result column="dt_create_time" property="createTime" />
         <result column="dt_update_time" property="updateTime" />
         <result column="c_login_id" property="loginId" />
@@ -15,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        c_id, c_username, c_password, c_status, dt_create_time, dt_update_time, c_login_id
+        c_id, c_username, c_password, c_status, c_online_status, dt_create_time, dt_update_time, c_login_id
     </sql>
 
 </mapper>

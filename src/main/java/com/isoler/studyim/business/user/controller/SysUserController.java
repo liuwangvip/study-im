@@ -2,7 +2,8 @@ package com.isoler.studyim.business.user.controller;
 
 
 import com.isoler.studyim.business.user.model.bean.SysUser;
-import com.isoler.studyim.business.user.model.dto.UserDto;
+import com.isoler.studyim.business.user.model.dto.RegisterDto;
+import com.isoler.studyim.business.user.model.dto.UserInfoDto;
 import com.isoler.studyim.business.user.service.ISysUserService;
 import com.isoler.studyim.common.api.CommonResult;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -44,7 +46,31 @@ public class SysUserController {
 
     @PostMapping("register")
     @ApiOperation("注册用户")
-    public CommonResult<SysUser> register(@Valid UserDto dto) {
+    public CommonResult<SysUser> register(@Valid RegisterDto dto) {
         return CommonResult.success(sysUserService.register(dto));
+    }
+
+    /**
+     * 获取用户列表
+     *
+     * @param dto dto
+     * @return
+     */
+    @ApiOperation("用户列表")
+    @PostMapping("list")
+    public CommonResult<List<SysUser>> listUser(@RequestBody UserInfoDto dto) {
+        return CommonResult.success(sysUserService.listUser(dto));
+    }
+
+    /**
+     * 获取在线总人数
+     *
+     * @param onlineStatus dto
+     * @return
+     */
+    @ApiOperation("统计在线总人数")
+    @GetMapping("count/{onlineStatus}")
+    public CommonResult<Long> countOnline(@PathVariable("onlineStatus") String onlineStatus) {
+        return CommonResult.success(sysUserService.countOnlineUser(onlineStatus));
     }
 }

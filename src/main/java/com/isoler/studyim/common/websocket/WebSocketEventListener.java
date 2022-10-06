@@ -3,6 +3,8 @@ package com.isoler.studyim.common.websocket;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
 import com.isoler.studyim.business.chatmessage.model.eo.MessageTypeEnum;
 import com.isoler.studyim.business.user.model.bean.SysUser;
+import com.isoler.studyim.business.user.model.eo.OnlineStatusEnum;
+import com.isoler.studyim.business.user.service.ISysUserService;
 import com.isoler.studyim.common.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -29,6 +31,9 @@ public class WebSocketEventListener {
     @Resource
     private SimpMessageSendingOperations messagingTemplate;
 
+    @Resource
+    private ISysUserService sysUserService;
+
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         final Principal principal = event.getUser();
@@ -37,12 +42,7 @@ public class WebSocketEventListener {
             return;
         }
         log.info(String.format("%s %s", sysUser.getUsername(), "进入"));
-//        ChatMessage chatMessage = new ChatMessage()
-//                .setType(MessageTypeEnum.NOTICE_ENTER_OUT.getType())
-//                .setContent(String.format("%s %s", sysUser.getUsername(), "进入"))
-//                .setSendDate(DateUtil.toString(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss"));
-//        messagingTemplate.convertAndSend("/topic/public", chatMessage);
-
+        sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.ON_LINE.getStatus());
     }
 
     private SysUser getSysUserByPrincipal(Object obj) {
@@ -66,6 +66,7 @@ public class WebSocketEventListener {
             return;
         }
         log.info(String.format("%s %s", sysUser.getUsername(), "离开"));
+        sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.OFF_LINE.getStatus());
         ChatMessage chatMessage = new ChatMessage()
                 .setType(MessageTypeEnum.NOTICE_ENTER_OUT.getType())
                 .setContent(String.format("%s %s", sysUser.getUsername(), "离开"));

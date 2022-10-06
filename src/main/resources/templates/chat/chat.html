@@ -61,7 +61,7 @@
                     <div class="fd-left-ul-tool">
                         <div class="fd-left-ul-tool-search">
                             <el-input @keyup.enter.native="searchChatRoom" size="mini" prefix-icon="el-icon-search"
-                                      placeholder="搜索" v-model="searchChatRoomText"
+                                      placeholder="搜索" v-model="roomList.searchText"
                                       class="input-with-select">
                             </el-input>
                         </div>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="fd-left-main">
                         <div class="infinite-list-wrapper">
-                            <template v-for="item in roomList">
+                            <template v-for="item in roomList.data">
                                 <div class="fd-left-ul-item">
                                     <div>
                                         <el-badge :value="200" :max="99" class="item">
@@ -96,7 +96,7 @@
                     <div class="fd-left-ul-tool">
                         <div class="fd-left-ul-tool-search">
                             <el-input @keyup.enter.native="searchUserList" size="mini" prefix-icon="el-icon-search"
-                                      placeholder="搜索" v-model="searchUserListText"
+                                      placeholder="搜索" v-model="userList.searchText"
                                       class="input-with-select">
                             </el-input>
                         </div>
@@ -112,28 +112,27 @@
                     </div>
 
                     <div class="fd-left-main">
-                        <div class="infinite-list-wrapper">
-                            <template v-for="item in userList">
-                                <div class="fd-left-ul-item">
-                                    <div>
-                                        <el-badge :value="200" :max="99" class="item">
-                                            <el-avatar style="line-height: 40px;" size="medium"
-                                                       :src="item.src" fit="none"></el-avatar>
-                                        </el-badge>
-                                    </div>
-                                    <div class="fd-left-ul-item-name">
-                                        {{item.name}}
-                                    </div>
+                        <template v-for="item in userList.all">
+                            <div class="fd-left-ul-item">
+                                <div>
+                                    <el-badge :value="200" :max="99" class="item">
+                                        <el-avatar style="line-height: 40px;" size="medium"
+                                                   src="img/chat/user-blue.png" fit="none"></el-avatar>
+                                    </el-badge>
                                 </div>
-                            </template>
-                        </div>
+                                <div class="fd-left-ul-item-name">
+                                    {{item.username}}
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </el-aside>
-                <el-container class="fd-chat-container">
+                <el-container class="fd-chat-container" v-loading="chat.loading"
+                              :element-loading-text="chat.loadingText">
                     <el-header class="fd-chat-header">
                         <div class="fd-chat-title">
                             <span>群聊</span>
-                            <span>(22)</span>
+                            <span>({{chat.userList.onlineNum}})</span>
 
                         </div>
                         <div style="line-height: 20px;>
@@ -179,6 +178,30 @@
                                             </div>
                                             <div class="fd-chat-message-content-text">
                                                 {{message.content}}
+                                            </div>
+                                            <div class="fd-chat-message-content-file"
+                                                 v-if="message.fileId!='' && message.fileId!=null">
+                                                <div class="fd-chat-message-content-file-item">
+                                                    <i class="el-icon-document"></i>
+                                                    {{message.fileName}}
+                                                </div>
+                                                <div class="fd-chat-message-content-file-item"
+                                                     v-if="canPreviewFile(message.fileName)">
+                                                    <el-tooltip class="item" effect="dark" content="预览"
+                                                                placement="bottom-end">
+                                                        <el-link :underline="false"
+                                                                 @click="previewFile(message)"><i
+                                                                    class="el-icon-view el-icon--right"></i></el-link>
+                                                    </el-tooltip>
+                                                </div>
+                                                <div class="fd-chat-message-content-file-item">
+                                                    <el-tooltip class="item" effect="dark" content="下载"
+                                                                placement="bottom-end">
+                                                        <el-link :underline="false" :href="'file/'+message.fileId"><i
+                                                                    class="el-icon-download el-icon--right"></i>
+                                                        </el-link>
+                                                    </el-tooltip>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -309,25 +332,29 @@
         </el-footer>
     </el-container>
 
+    <el-dialog :visible.sync="visible.showPic">
+        <img width="100%" :src="chat.preview.pictureUrl" alt="">
+    </el-dialog>
+
     <el-drawer title="showMore" :visible.sync="visible.showMoreDialog" :with-header="false">
         <div class="fd-drawer-container">
             <div class="fd-user">
                 <div class="fd-user-search">
-                    <el-input @keyup.enter.native="searchUserList" size="mini"
+                    <el-input @keyup.enter.native="searchChatUserList" size="mini"
                               prefix-icon="el-icon-search"
-                              placeholder="搜索" v-model="searchUserListText"
+                              placeholder="搜索" v-model="chat.userList.searchText"
                               class="input-with-select">
                     </el-input>
                 </div>
                 <div class="fd-user-list">
-                    <template v-for="item in userList">
+                    <template v-for="item in chat.userList.onlineList">
                         <div class="fd-user-item">
                             <div>
                                 <el-avatar style="line-height: 32px;" size="medium"
-                                           :src="item.src" fit="none"></el-avatar>
+                                           src="img/chat/user-blue.png" fit="none"></el-avatar>
                             </div>
                             <div style="text-align: center">
-                                {{item.name}}
+                                {{item.username}}
                             </div>
                         </div>
                     </template>
@@ -350,7 +377,8 @@
         </div>
     </el-drawer>
 
-    <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="60%" height="80%" class="fd-historyMessage-dialog"center>
+    <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="60%" height="80%"
+               class="fd-historyMessage-dialog" center>
         <el-container class="fd-history-chat-container">
             <el-header class="fd-history-chat-header" height="50px">
                 <el-input @keyup.enter.native="searchHistoryMessage" size="mini"
@@ -383,6 +411,30 @@
                                 </div>
                                 <div class="fd-chat-message-content-text">
                                     {{message.content}}
+                                </div>
+                                <div class="fd-chat-message-content-file"
+                                     v-if="message.fileId!='' && message.fileId!=null">
+                                    <div class="fd-chat-message-content-file-item">
+                                        <i class="el-icon-document"></i>
+                                        {{message.fileName}}
+                                    </div>
+                                    <div class="fd-chat-message-content-file-item"
+                                         v-if="canPreviewFile(message.fileName)">
+                                        <el-tooltip class="item" effect="dark" content="预览"
+                                                    placement="bottom-end">
+                                            <el-link :underline="false"
+                                                     @click="previewFile(message)"><i
+                                                        class="el-icon-view el-icon--right"></i></el-link>
+                                        </el-tooltip>
+                                    </div>
+                                    <div class="fd-chat-message-content-file-item">
+                                        <el-tooltip class="item" effect="dark" content="下载"
+                                                    placement="bottom-end">
+                                            <el-link :underline="false" :href="'file/'+message.fileId"><i
+                                                        class="el-icon-download el-icon--right"></i>
+                                            </el-link>
+                                        </el-tooltip>
+                                    </div>
                                 </div>
                             </div>
                         </div>

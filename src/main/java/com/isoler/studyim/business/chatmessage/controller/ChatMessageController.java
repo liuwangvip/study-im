@@ -47,7 +47,7 @@ public class ChatMessageController {
         return chatMessage;
     }
 
-    @MessageMapping("/chat.addUser")
+    @MessageMapping("/chat.online")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage) {
         log.info("提示，进入群聊:" + chatMessage.getSenderName());

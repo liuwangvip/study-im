@@ -9,25 +9,27 @@ var vm = new Vue({
                 userDialog: true,
                 fileDialog: false,
                 showMoreDialog: false,
-                historyMessageDialog: false
+                historyMessageDialog: false,
+                showPic: false,
             },
             navType: "",
             /**
              * 聊天室列表
              */
-            roomList: [{name: "群聊", src: "img/chat/chatroom.png"}],
+            roomList: {
+                searchText: "",
+                data: [{name: "群聊", src: "img/chat/chatroom.png"}]
+            },
             /**
              * 用户列表
              */
-            userList: [{name: "超管", src: "img/chat/user-blue.png"}],
-            /**
-             * 搜索聊天室
-             */
-            searchChatRoomText: "",
-            /**
-             * 搜索人员
-             */
-            searchUserListText: "",
+            userList: {
+                searchText: "",
+                /**
+                 * 所有用户
+                 */
+                all: []
+            },
             /**
              * 当前用户信息
              */
@@ -41,10 +43,17 @@ var vm = new Vue({
             },
             stompClient: null,
             timer: '',
+            maxFailNum: 5,
             serverUrl: '',
             headers: {},
             connectStatus: "",
             chat: {
+                loading: false,
+                loadingText: "",
+                preview: {
+                    pictureUrl: "",
+                    pdfUrl: ""
+                },
                 colors: [
                     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
                     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
@@ -58,6 +67,14 @@ var vm = new Vue({
                         createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                     },
                     data: [],
+                },
+                /**
+                 * 用户列表
+                 */
+                userList: {
+                    searchText: "",
+                    onlineNum: 0,
+                    onlineList: []
                 },
                 /**
                  * 历史消息搜索
@@ -80,50 +97,7 @@ var vm = new Vue({
                      */
                     size: 10,
                     total: 0,
-                    data: [
-                        {
-                            senderName: "超管",
-                            content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "你好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "我好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "大家好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "都很好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "都很好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                        {
-                            senderName: "超管",
-                            content: "都很好",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                    ]
+                    data: []
                 },
                 /**
                  * 待发送消息的消息内容
@@ -150,7 +124,7 @@ var vm = new Vue({
                     return;
                 case 'chatRoom':
                     this.loadRoomList();
-                    return;
+                    this.return;
             }
         }
     },
@@ -190,15 +164,21 @@ var vm = new Vue({
         logout: function () {
             window.location.href = "logout";
         },
+        /**
+         * 搜索聊天室
+         */
         searchChatRoom: function () {
-            if (this.searchChatRoomText == "") {
+            if (this.roomList.searchText == "") {
                 this.$message('搜索内容不能为空');
                 return;
             }
             this.$message('开发中。。。');
         },
+        /**
+         * 搜索用户
+         */
         searchUserList: function () {
-            if (this.searchUserListText == "") {
+            if (this.userList.searchText == "") {
                 this.$message('搜索内容不能为空');
                 return;
             }
@@ -220,23 +200,56 @@ var vm = new Vue({
          * 获取聊天室列表
          */
         loadRoomList: function () {
-            this.roomList.splice(0);
-            for (let i = 0; i < 1; i++) {
-                var size = this.roomList.length + 1;
-                var room = {name: "群聊" + size, src: "img/chat/chatroom.png"};
-                this.roomList.push(room);
-            }
+            //TODO 获取聊天室列表
+        },
+        /**
+         * 获取在线人数
+         */
+        loadOnlineUserCount: function () {
+            var _this = this;
+            axios.get("user/count/1").then(function (res) {
+                if (res.data.success) {
+                    console.log("获取在线人数", res.data.result);
+                    _this.chat.userList.onlineNum = res.data.result;
+                }
+            }).catch(function (err) {
+                _this.$message.error("获取在线人数失败");
+            });
         },
         /**
          * 获取用户列表
          */
         loadUserList: function () {
-            this.userList.splice(0);
-            for (let i = 0; i < 10; i++) {
-                var size = this.userList.length + 1;
-                var room = {name: "用户" + size, src: "img/chat/user-blue.png"};
-                this.userList.push(room);
+            var _this = this;
+            axios.post("user/list", {}).then(function (res) {
+                _this.userList.all = res.data.result;
+            }).catch(function (e) {
+                console.log("获取用户列表失败", e);
+                _this.$message.error("获取用户列表失败");
+            });
+        },
+        /**
+         * 获取聊天室在线用户列表
+         */
+        loadChatOnlineUserList: function () {
+            var _this = this;
+            var param = {"onlineStatus": "1"};
+            axios.post("user/list", param).then(function (res) {
+                _this.chat.userList.onlineList = res.data.result;
+            }).catch(function (e) {
+                console.log("获取用户列表失败", e);
+                _this.$message.error("获取用户列表失败");
+            });
+        },
+        /**
+         * 搜索用户
+         */
+        searchChatUserList: function () {
+            if (this.chat.userList.searchText == "") {
+                this.$message('搜索内容不能为空');
+                return;
             }
+            this.$message('开发中。。。');
         },
         /**
          * 获取消息列表，获取最近的条消息
@@ -246,13 +259,37 @@ var vm = new Vue({
             var _this = this;
             var param = {current: 1, size: size};
             axios.post("chat/page", param).then(function (res) {
-                _this.chat.message.data = res.data.result.records;
-                _this.chat.message.data.push(_this.chat.message.tip);
-                _this.scrollToChatMessageBottom();
+                if (res.data.result && res.data.result.records) {
+                    _this.chat.message.data = res.data.result.records.reverse();
+                    _this.chat.message.data.push(_this.chat.message.tip);
+                    _this.scrollToChatMessageBottom();
+                }
             }).catch(function (e) {
                 console.log(e);
                 _this.$message.error("获取最近消息失败");
             });
+        },
+        /**
+         * 是否可以预览文件
+         * @param fileName 文件名
+         */
+        canPreviewFile: function (fileName) {
+            if (/\.(png|jpg|jpeg)$/.test(fileName)) {
+                return true;
+            }
+            return false;
+        },
+        /**
+         * 预览文件
+         * @param fileId 文件id
+         */
+        previewFile: function (file) {
+            if (/\.(png|jpg|jpeg)$/.test(file.fileName)) {
+                this.visible.showPic = true;
+                this.chat.preview.pictureUrl = "file/" + file.fileId;
+                return;
+            }
+            this.$message("暂不支持该文件预览");
         },
         /**
          * 打开表情面板
@@ -277,6 +314,8 @@ var vm = new Vue({
                 this.$message.error('上传文件大小不能超过 200MB!');
                 return false;
             }
+            this.chat.loading = true;
+            this.chat.loadingText = "文件上传中,请稍等";
             return true;
         },
         /**
@@ -286,6 +325,7 @@ var vm = new Vue({
          * @param fileList
          */
         handleFileSuccess: function (res, file, fileList) {
+            this.chat.loading = false;
             this.$message({type: "success", message: "文件上传成功"});
             this.showChatSendFile(res);
         },
@@ -306,6 +346,7 @@ var vm = new Vue({
          * @param fileList
          */
         handleFileFail: function (res, file, fileList) {
+            this.chat.loading = false;
             this.$message.error(res.message || "文件上传失败，请联系管理员");
         },
         /**
@@ -315,16 +356,21 @@ var vm = new Vue({
             var _this = this;
             axios.delete("file/" + this.chat.sendFile.fileId).then(function (res) {
                 console.log("文件删除成功", res);
-                _this.chat.sendFile.show = false;
-                _this.chat.sendFile.disabled = false;
-                _this.chat.sendFile.fileName = "";
-                _this.chat.sendFile.fileId = "";
+                _this.clearSendFile();
                 _this.$message({message: "文件删除成功", type: 'success'});
             }).catch(function (e) {
                 console.log("文件删除失败", e);
                 _this.$message.error("文件删除失败，请联系管理员");
             });
-
+        },
+        /**
+         * 清空待发送的文件
+         */
+        clearSendFile: function () {
+            this.chat.sendFile.show = false;
+            this.chat.sendFile.disabled = false;
+            this.chat.sendFile.fileName = "";
+            this.chat.sendFile.fileId = "";
         },
         /**
          * 打开消息历史
@@ -408,10 +454,13 @@ var vm = new Vue({
         openVideoChat: function () {
             this.$message('开发中。。。');
         },
+        /**
+         * 显示更多
+         */
         showMore: function () {
             this.visible.showMoreDialog = !this.visible.showMoreDialog;
             if (this.visible.showMoreDialog) {
-                this.loadUserList();
+                this.loadChatOnlineUserList();
             }
         },
 
@@ -467,8 +516,13 @@ var vm = new Vue({
             let that = this;
             // 断开重连机制,尝试发送消息,捕获异常发生时重连
             this.timer = setInterval(() => {
+                if (that.maxFailNum < 0) {
+                    that.$notify.error({title: '提示', message: '尝试断线重连失败，已达最大失败次数', duration: 0});
+                    clearInterval(that.timer);
+                    return;
+                }
                 if (that.connectStatus == "3" || that.connectStatus == "4") {
-                    this.$message("尝试断线重连");
+                    that.$message("尝试断线重连");
                     that.connect(that.serverUrl);
                 }
             }, 5000);
@@ -495,12 +549,18 @@ var vm = new Vue({
          * 链接成功
          */
         onConnectSuccess: function () {
+            this.maxFailNum = 5;
             this.connectStatus = "2";
+            this.loadOnlineUserCount();
             /**
              * 订阅服务器发给topic/public的消息
              */
             this.stompClient.subscribe('/topic/public', this.onMessageReceived);
-            this.stompClient.send("/app/chat.addUser",
+            /**
+             * 订阅服务器发给topic/online的消息
+             */
+            this.stompClient.subscribe('/topic/online', this.onMessageOnline);
+            this.stompClient.send("/app/chat.online",
                 this.headers,
                 JSON.stringify({
                     senderId: this.currentUser.id,
@@ -509,7 +569,7 @@ var vm = new Vue({
                     content: this.currentUser.username + " 上线",
                     createTime: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
-            )
+            );
         },
         /**
          * 接收服务器消息
@@ -521,6 +581,13 @@ var vm = new Vue({
             let message = JSON.parse(payload.body);
             this.chat.message.data.push(message);
             this.scrollToChatMessageBottom();
+        },
+        /**
+         * 接收服务器在线消息
+         * @param payload
+         */
+        onMessageOnline: function (payload) {
+            console.log("在线消息：", payload);
         },
         /**
          * 滚动到最新消息处
@@ -545,7 +612,6 @@ var vm = new Vue({
             var chatMessage = {
                 senderId: this.currentUser.id,
                 senderName: this.currentUser.username,
-                sender: this.currentUser.username,
                 fileId: this.chat.sendFile.fileId,
                 fileName: this.chat.sendFile.fileName,
                 content: this.chat.msgContent,
@@ -556,7 +622,7 @@ var vm = new Vue({
                 JSON.stringify(chatMessage)
             )
             this.chat.msgContent = "";
-            this.deleteSendFile();
+            this.clearSendFile();
         },
         /**
          * 发送文件
@@ -569,6 +635,7 @@ var vm = new Vue({
          */
         onConnectError: function (err) {
             this.connectStatus = "3";
+            this.maxFailNum = this.maxFailNum - 1;
             this.$notify({title: '提示', message: '连接服务器失败', type: 'error'});
         },
         /**

@@ -60,7 +60,4 @@ public class ChatMessage extends BaseEntity {
     @TableField("c_status")
     private String status = MessageStatusEnum.VALID.getStatus();
 
-
-
-
 }

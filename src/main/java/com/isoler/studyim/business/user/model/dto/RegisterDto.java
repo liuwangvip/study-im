@@ -12,8 +12,8 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "SysUser对象", description = "系统用户表")
-public class UserDto implements Serializable {
+@ApiModel(value = "注册", description = "注册对象")
+public class RegisterDto implements Serializable {
 
     @ApiModelProperty(value = "用户名")
     @NotBlank(message = "用户昵称不能为空")

@@ -2,7 +2,10 @@ package com.isoler.studyim.business.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.isoler.studyim.business.user.model.bean.SysUser;
-import com.isoler.studyim.business.user.model.dto.UserDto;
+import com.isoler.studyim.business.user.model.dto.RegisterDto;
+import com.isoler.studyim.business.user.model.dto.UserInfoDto;
+
+import java.util.List;
 
 /**
  * <p>
@@ -27,5 +30,29 @@ public interface ISysUserService extends IService<SysUser> {
      * @param dto
      * @return
      */
-    SysUser register(UserDto dto);
+    SysUser register(RegisterDto dto);
+
+    /**
+     * 更新在线状态
+     *
+     * @param id
+     * @param onlineStatus
+     */
+    void updateOnlineStatus(String id, String onlineStatus);
+
+    /**
+     * 获取在线用户列表
+     *
+     * @param dto
+     * @return
+     */
+    List<SysUser> listUser(UserInfoDto dto);
+
+    /**
+     * 获取在线人数
+     *
+     * @param onlineStatus 在线状态
+     * @return
+     */
+    long countOnlineUser(String onlineStatus);
 }
