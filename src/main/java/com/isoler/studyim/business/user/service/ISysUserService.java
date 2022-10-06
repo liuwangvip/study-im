@@ -23,6 +23,7 @@ public interface ISysUserService extends IService<SysUser> {
      * @return
      */
     SysUser getByUserName(String username);
+    
 
     /**
      * 注册用户

@@ -539,9 +539,7 @@ var vm = new Vue({
             // 获取STOMP子协议的客户端对象
             this.stompClient = Stomp.over(socket);
             // 定义客户端的认证信息,按需求配置
-            this.headers = {
-                Authorization: ''
-            }
+            this.headers = {}
             // 向服务器发起websocket连接
             this.stompClient.connect(this.headers, this.onConnectSuccess, this.onConnectError);
         },
@@ -551,7 +549,6 @@ var vm = new Vue({
         onConnectSuccess: function () {
             this.maxFailNum = 5;
             this.connectStatus = "2";
-            this.loadOnlineUserCount();
             /**
              * 订阅服务器发给topic/public的消息
              */
@@ -560,15 +557,8 @@ var vm = new Vue({
              * 订阅服务器发给topic/online的消息
              */
             this.stompClient.subscribe('/topic/online', this.onMessageOnline);
-            this.stompClient.send("/app/chat.online",
-                this.headers,
-                JSON.stringify({
-                    senderId: this.currentUser.id,
-                    senderName: this.currentUser.username,
-                    type: '2.2',
-                    content: this.currentUser.username + " 上线",
-                    createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                })
+            this.stompClient.send("/app/chat.online", this.headers,
+                JSON.stringify({senderName: this.currentUser.username})
             );
         },
         /**
@@ -576,8 +566,6 @@ var vm = new Vue({
          * @param payload
          */
         onMessageReceived: function (payload) {
-            console.log("接收消息：", payload);
-            var _this = this;
             let message = JSON.parse(payload.body);
             this.chat.message.data.push(message);
             this.scrollToChatMessageBottom();
@@ -587,7 +575,7 @@ var vm = new Vue({
          * @param payload
          */
         onMessageOnline: function (payload) {
-            console.log("在线消息：", payload);
+            this.chat.userList.onlineNum = payload.body;
         },
         /**
          * 滚动到最新消息处

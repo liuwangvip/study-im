@@ -60,4 +60,9 @@ public class ChatMessage extends BaseEntity {
     @TableField("c_status")
     private String status = MessageStatusEnum.VALID.getStatus();
 
+    @ApiModelProperty(value = "在线人数")
+    @TableField(exist = false)
+    private Long onlineCount;
+
+
 }

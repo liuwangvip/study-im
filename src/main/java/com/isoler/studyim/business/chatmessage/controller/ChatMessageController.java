@@ -4,13 +4,17 @@ package com.isoler.studyim.business.chatmessage.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
 import com.isoler.studyim.business.chatmessage.model.dto.ChatMessagePageDto;
+import com.isoler.studyim.business.chatmessage.model.eo.MessageTypeEnum;
 import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
+import com.isoler.studyim.business.user.model.bean.SysUser;
 import com.isoler.studyim.common.api.CommonResult;
+import com.isoler.studyim.common.websocket.WebSocketEventListener;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +39,20 @@ public class ChatMessageController {
     @Resource
     private IChatMessageService chatMessageService;
 
+    @Resource
+    private WebSocketEventListener webSocketEventListener;
+
+    /**
+     * 查询消息列表
+     *
+     * @param dto 参数
+     * @return
+     */
+    @PostMapping("chat/page")
+    public CommonResult<Page<ChatMessage>> pageChatMessage(@RequestBody ChatMessagePageDto dto) {
+        return CommonResult.success(chatMessageService.pageChatMessage(dto));
+    }
+
     /**
      * 发送广播消息
      *
@@ -47,22 +65,23 @@ public class ChatMessageController {
         return chatMessage;
     }
 
+    /**
+     * 上线消息
+     *
+     * @param chatMessage
+     * @param headerAccessor
+     * @return
+     */
     @MessageMapping("/chat.online")
-    @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage) {
-        log.info("提示，进入群聊:" + chatMessage.getSenderName());
+    public ChatMessage onlineNotice(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor, Authentication authentication) {
+        headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderName());
+        if (authentication.getPrincipal() instanceof SysUser) {
+            SysUser user = (SysUser) authentication.getPrincipal();
+            webSocketEventListener.noticeOnline(user, MessageTypeEnum.NOTICE_ONLINE, true);
+        }
+        webSocketEventListener.noticeOnlineCount();
         return chatMessage;
     }
 
-    /**
-     * 查询消息列表
-     *
-     * @param dto 参数
-     * @return
-     */
-    @PostMapping("chat/page")
-    public CommonResult<Page<ChatMessage>> pageChatMessage(@RequestBody ChatMessagePageDto dto) {
-        return CommonResult.success(chatMessageService.pageChatMessage(dto));
-    }
 
 }
