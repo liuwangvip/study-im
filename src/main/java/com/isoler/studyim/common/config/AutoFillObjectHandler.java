@@ -2,9 +2,11 @@ package com.isoler.studyim.common.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.isoler.studyim.business.user.model.bean.SysUser;
-import com.isoler.studyim.common.websocket.util.SecurityUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 
@@ -25,7 +27,7 @@ public class AutoFillObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName(CommonProperty.CREATE_TIME.getName(), new Date(), metaObject);
         this.setFieldValByName(CommonProperty.UPDATE_TIME.getName(), new Date(), metaObject);
-        final SysUser currentUser = SecurityUtil.getCurrentUser();
+        final SysUser currentUser = getCurrentUser();
         if (currentUser != null) {
             this.setFieldValByName(CommonProperty.CREATOR_ID.getName(), currentUser.getId(), metaObject);
             this.setFieldValByName(CommonProperty.UPDATOR_ID.getName(), currentUser.getId(), metaObject);
@@ -41,9 +43,34 @@ public class AutoFillObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         this.setFieldValByName(CommonProperty.UPDATE_TIME.getName(), new Date(), metaObject);
-        final SysUser currentUser = SecurityUtil.getCurrentUser();
+        final SysUser currentUser = getCurrentUser();
         if (currentUser != null) {
             this.setFieldValByName(CommonProperty.UPDATOR_ID.getName(), currentUser.getId(), metaObject);
         }
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
+    private SysUser getCurrentUser() {
+        final SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null) {
+            return null;
+        }
+        if (context.getAuthentication() == null) {
+            return null;
+        }
+        if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        if (context.getAuthentication().getPrincipal() == null) {
+            return null;
+        }
+        if (context.getAuthentication().getPrincipal() instanceof SysUser) {
+            return (SysUser) context.getAuthentication().getPrincipal();
+        }
+        return null;
     }
 }
