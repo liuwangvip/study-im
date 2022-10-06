@@ -137,10 +137,14 @@
 
                         </div>
                         <div style="line-height: 20px;>
-                            <el-alert v-if="connectStatus=='1'" title="连接中..." show-icon center type="info" :closable="false"></el-alert>
-                            <el-alert v-if="connectStatus=='2'" title="连接成功" show-icon center type="success" :closable="false"></el-alert>
-                            <el-alert v-if="connectStatus=='3'" title="连接失败" show-icon center type="error" :closable="false"></el-alert>
-                            <el-alert v-if="connectStatus=='4'" title="连接断开" show-icon center type="warn" :closable="false"></el-alert>
+                            <el-alert v-if=" connectStatus=='1'" title="连接中..." show-icon center type="info"
+                             :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='2'" title="连接成功" show-icon center type="success"
+                                      :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='3'" title="连接失败" show-icon center type="error"
+                                      :closable="false"></el-alert>
+                            <el-alert v-if="connectStatus=='4'" title="连接断开" show-icon center type="warn"
+                                      :closable="false"></el-alert>
                         </div>
                         <div class="fd-chat-more" @click="showMore">
                             <svg t="1664568892984" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -150,30 +154,32 @@
                             </svg>
                         </div>
                     </el-header>
-                    <el-main class="fd-chat-main" ref="fd_chat_main" style="margin-bottom: 20px">
-                        <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
-                            <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
-                                <div class="chat-notice-text">
-                                    <span>{{message.content}}</span>
-                                    <span style="padding-left: 5px">{{message.createTime}}</span>
-                                </div>
-                            </div>
-                            <div class="fd-chat-message" v-else>
-                                <div class="fd-chat-message-left"
-                                     :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
-                                    <div :style="getAvatarStyle(message)" class="fd-chat-message-avatar">
-                                        {{message.senderName[0]}}
+                    <el-main style="height: calc(100vh - 400px);">
+                        <div class="fd-chat-main" ref="fd_chat_main">
+                            <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
+                                <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
+                                    <div class="chat-notice-text">
+                                        <span>{{message.content}}</span>
+                                        <span style="padding-left: 5px">{{message.createTime}}</span>
                                     </div>
-
-                                    <div class="fd-chat-message-content"
-                                         :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
-                                        <div class="fd-chat-message-title"
-                                             :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
-                                            <span>{{message.senderName}}</span>
-                                            <span class="fd-chat-message-title-date">{{message.createTime}}</span>
+                                </div>
+                                <div class="fd-chat-message" v-else>
+                                    <div class="fd-chat-message-left"
+                                         :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                        <div :style="getAvatarStyle(message)" class="fd-chat-message-avatar">
+                                            {{message.senderName[0]}}
                                         </div>
-                                        <div class="fd-chat-message-content-text">
-                                            {{message.content}}
+
+                                        <div class="fd-chat-message-content"
+                                             :style="{'align-items': message.senderName!=currentUser.username?'flex-start':'flex-end'}">
+                                            <div class="fd-chat-message-title"
+                                                 :style="{'flex-direction':message.senderName!=currentUser.username?'row':'row-reverse'}">
+                                                <span>{{message.senderName}}</span>
+                                                <span class="fd-chat-message-title-date">{{message.createTime}}</span>
+                                            </div>
+                                            <div class="fd-chat-message-content-text">
+                                                {{message.content}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -344,9 +350,9 @@
         </div>
     </el-drawer>
 
-    <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="600px" height="80%" center>
+    <el-dialog title="历史消息" top="0vh" :visible.sync="visible.historyMessageDialog" width="60%" height="80%" class="fd-historyMessage-dialog"center>
         <el-container class="fd-history-chat-container">
-            <el-header class="fd-history-chat-header" height="40px">
+            <el-header class="fd-history-chat-header" height="50px">
                 <el-input @keyup.enter.native="searchHistoryMessage" size="mini"
                           prefix-icon="el-icon-search"
                           placeholder="搜索" v-model="chat.historyMessage.searchText"
@@ -383,16 +389,16 @@
                     </div>
                 </div>
             </el-main>
-            <el-footer style="text-align: center" height="30px">
+            <el-footer class="fd-history-chat-footer" height="50px">
                 <el-pagination
                         small="true"
                         @size-change="handleHistoryMessageSizeChange"
                         @current-change="handleHistoryMessagePageChange"
-                        :current-page="chat.historyMessage.page"
+                        :current-page="chat.historyMessage.current"
                         :page-sizes="[10, 20, 50]"
-                        :page-size="chat.historyMessage.pageSize"
-                        layout="total, prev, pager, next, sizes"
-                        :total="400">
+                        :page-size="chat.historyMessage.size"
+                        :total="chat.historyMessage.total"
+                        layout="total, prev, pager, next, sizes">
                 </el-pagination>
             </el-footer>
         </el-container>

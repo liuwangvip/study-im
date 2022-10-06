@@ -1,13 +1,18 @@
 package com.isoler.studyim.business.chatmessage.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessagePageDto;
 import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
+import com.isoler.studyim.common.api.CommonResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,5 +54,15 @@ public class ChatMessageController {
         return chatMessage;
     }
 
+    /**
+     * 查询消息列表
+     *
+     * @param dto 参数
+     * @return
+     */
+    @PostMapping("chat/page")
+    public CommonResult<Page<ChatMessage>> pageChatMessage(@RequestBody ChatMessagePageDto dto) {
+        return CommonResult.success(chatMessageService.pageChatMessage(dto));
+    }
 
 }

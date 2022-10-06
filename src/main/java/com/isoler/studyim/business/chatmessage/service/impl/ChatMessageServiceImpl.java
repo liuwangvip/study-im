@@ -1,18 +1,23 @@
 package com.isoler.studyim.business.chatmessage.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.isoler.studyim.business.chatmessage.mapper.ChatMessageMapper;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessageDto;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessagePageDto;
 import com.isoler.studyim.business.chatmessage.model.eo.MessageStatusEnum;
 import com.isoler.studyim.business.chatmessage.model.eo.MessageTargetTypeEnum;
 import com.isoler.studyim.business.chatmessage.model.eo.MessageTypeEnum;
 import com.isoler.studyim.business.chatmessage.service.IChatMessageService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -48,5 +53,19 @@ public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatM
                 .setType(MessageTypeEnum.CHAT.getType());
         this.save(chatMessage);
         messagingTemplate.convertAndSend("/topic/public", chatMessage);
+    }
+
+    @Override
+    public Page<ChatMessage> pageChatMessage(ChatMessagePageDto dto) {
+        Page<ChatMessage> page = new Page<>(dto.getCurrent(), dto.getSize());
+        ChatMessageDto params = new ChatMessageDto();
+        BeanUtils.copyProperties(dto, params);
+        page.setRecords(baseMapper.listChatMessage(page, params));
+        return page;
+    }
+
+    @Override
+    public List<ChatMessage> listChatMessage(ChatMessageDto dto) {
+        return baseMapper.listChatMessage(dto);
     }
 }

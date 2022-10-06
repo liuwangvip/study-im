@@ -1,9 +1,13 @@
 package com.isoler.studyim.business.chatmessage.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessageDto;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessagePageDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -32,4 +36,21 @@ public interface IChatMessageService extends IService<ChatMessage> {
      * @param chatMessage
      */
     void sendPublicMessage(ChatMessage chatMessage);
+
+    /**
+     * 查询消息列表-分页
+     *
+     * @param dto 参数
+     * @return
+     */
+    Page<ChatMessage> pageChatMessage(ChatMessagePageDto dto);
+
+    /**
+     * 查询消息列表
+     *
+     * @param dto 参数
+     * @return
+     */
+    List<ChatMessage> listChatMessage(ChatMessageDto dto);
+
 }

@@ -1,7 +1,12 @@
 package com.isoler.studyim.business.chatmessage.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
+import com.isoler.studyim.business.chatmessage.model.dto.ChatMessageDto;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +21,20 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
      * 设置消息失效
      */
     Integer invalidMessage();
+
+    /**
+     * 获取消息列表
+     *
+     * @param dto
+     * @return
+     */
+    List<ChatMessage> listChatMessage(@Param("qo") ChatMessageDto dto);
+
+    /**
+     * 获取消息列表-分页
+     *
+     * @param dto 参数
+     * @return
+     */
+    List<ChatMessage> listChatMessage(IPage<ChatMessage> page, @Param("qo") ChatMessageDto dto);
 }

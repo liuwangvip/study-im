@@ -51,14 +51,13 @@ var vm = new Vue({
                 ],
                 //消息列表
                 message: {
-                    data: [
-                        {
-                            senderName: "超管",
-                            content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
-                            type: "1",
-                            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
-                        },
-                    ],
+                    tip: {
+                        senderName: "超管",
+                        content: "用户行为规范：用户的言行不得违反《计算机信息网络国际联网安全保护管理办法》、《互联网信息服务管理办法》、《维护互联网安全的决定》、《互联网新闻信息服务管理规定》、《长江保护法》、《中华人民共和国测绘法》、《地图管理条例》、《网络安全法》、《未成年人保护法》、《互联网宗教信息服务管理办法》等相关法律法规规定；由于用户言行导致的法律问题与平台无关，平台保留追诉权力。",
+                        type: "1",
+                        createTime: moment().format('YYYY-MM-DD HH:mm:ss')
+                    },
+                    data: [],
                 },
                 /**
                  * 历史消息搜索
@@ -72,8 +71,15 @@ var vm = new Vue({
                      * 搜索内容
                      */
                     searchText: "",
-                    page: 1,
-                    pageSize: 10,
+                    /**
+                     * 当前页码
+                     */
+                    current: 1,
+                    /**
+                     * 每页显示的条数
+                     */
+                    size: 10,
+                    total: 0,
                     data: [
                         {
                             senderName: "超管",
@@ -234,6 +240,22 @@ var vm = new Vue({
             }
         },
         /**
+         * 获取消息列表，获取最近的条消息
+         * @param size
+         */
+        loadMessageList: function (size) {
+            var _this = this;
+            var param = {current: 1, size: size};
+            axios.post("chat/page", param).then(function (res) {
+                _this.chat.message.data = res.data.result.records;
+                _this.chat.message.data.push(_this.chat.message.tip);
+                _this.scrollToChatMessageBottom();
+            }).catch(function (e) {
+                console.log(e);
+                _this.$message.error("获取最近消息失败");
+            });
+        },
+        /**
          * 打开表情面板
          */
         openEmo: function () {
@@ -302,6 +324,29 @@ var vm = new Vue({
          */
         openMsgHistory: function () {
             this.visible.historyMessageDialog = true;
+            this.chat.historyMessage.current = 1;
+            this.chat.historyMessage.size = 10;
+            this.chat.historyMessage.searchText = "";
+            this.loadHistoryMessageList();
+        },
+        /**
+         * 获取消息列表，获取最近的条消息
+         * @param size
+         */
+        loadHistoryMessageList: function () {
+            var _this = this;
+            var param = {
+                current: this.chat.historyMessage.current,
+                size: this.chat.historyMessage.size,
+                searchText: this.chat.historyMessage.searchText
+            };
+            axios.post("chat/page", param).then(function (res) {
+                _this.chat.historyMessage.data = res.data.result.records;
+                _this.chat.historyMessage.total = res.data.result.total;
+            }).catch(function (e) {
+                console.log(e);
+                _this.$message.error("获取历史消息失败");
+            });
         },
         /**
          * 历史消息搜索
@@ -311,17 +356,38 @@ var vm = new Vue({
                 this.$message("搜索内容不能为空");
                 return;
             }
-            this.$message("开发中......");
+            this.chat.historyMessage.current = 1;
+            this.chat.historyMessage.size = 10;
+            var param = {
+                current: this.chat.historyMessage.current,
+                size: this.chat.historyMessage.size,
+                searchText: this.chat.historyMessage.searchText
+            };
+            var _this = this;
+            axios.post("chat/page", param).then(function (res) {
+                _this.chat.historyMessage.data = res.data.result.records;
+                _this.chat.historyMessage.total = res.data.result.total;
+            }).catch(function (e) {
+                console.log(e);
+                _this.$message.error("获取历史消息失败");
+            });
         },
         /**
-         *
+         * 改变每页显示条数
          * @param val
          */
         handleHistoryMessageSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            this.chat.historyMessage.current = 1;
+            this.chat.historyMessage.size = val;
+            this.loadHistoryMessageList();
         },
+        /**
+         * 改变页码
+         * @param val
+         */
         handleHistoryMessagePageChange(val) {
-            console.log(`当前页: ${val}`);
+            this.chat.historyMessage.current = val;
+            this.loadHistoryMessageList();
         },
         /**
          * 打开语音聊天
@@ -449,13 +515,20 @@ var vm = new Vue({
             var _this = this;
             let message = JSON.parse(payload.body);
             this.chat.message.data.push(message);
+            this.scrollToChatMessageBottom();
+        },
+        /**
+         * 滚动到最新消息处
+         * @param ref
+         */
+        scrollToChatMessageBottom: function () {
+            var _this = this;
             this.$nextTick(() => {
                 if (_this.$refs.fd_chat_main.scrollHeight) {
                     _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
                 }
-            })
-        }
-        ,
+            }, 500);
+        },
         /**
          * 发送websocket消息
          */
@@ -531,6 +604,7 @@ var vm = new Vue({
         },
         init: function () {
             this.getLoginUser();
+            this.loadMessageList();
             this.navType = "chatRoom";
             this.serverUrl = this.getServerUrl();
             console.log("服务器地址:" + this.serverUrl);

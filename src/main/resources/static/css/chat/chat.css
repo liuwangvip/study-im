@@ -233,7 +233,7 @@ body {
  * 聊天区域中间区域
  */
 .fd-chat-container .fd-chat-main {
-    height: calc(100vh - 400px);
+    height: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -477,6 +477,10 @@ body {
 /*
  * 历史消息区域
 */
+.fd-historyMessage-dialog .el-dialog__body {
+    padding: 0px !important;
+}
+
 .fd-history-chat-container {
     position: relative;
     height: 80vh;
@@ -486,14 +490,16 @@ body {
  * 历史消息区域-头部搜索
 */
 .fd-history-chat-container .fd-history-chat-header {
-    padding: 0px 10px 10px 10px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 10px 20px 10px 20px;
 }
 
 /**
  * 历史消息区域-中间
  */
-.fd-history-chat-main .fd-history-chat-main {
-    height: calc(100vh - 400px);
+.fd-history-chat-container .fd-history-chat-main {
+    height: 100vh;
+    padding: 10px 20px 10px 20px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -501,5 +507,7 @@ body {
 /**
  * 历史消息区域-底部
  */
-.fd-history-chat-main .fd-history-chat-footer {
+.fd-history-chat-container .fd-history-chat-footer {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
