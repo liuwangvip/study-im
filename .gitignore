@@ -36,3 +36,4 @@ mvnw
 mvnw.cmd
 /src/main/resources/application-local.yml
 /release
+/src/test/java/com/isoler/studyim/util/CodeGenerateTest.java
