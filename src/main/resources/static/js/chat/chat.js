@@ -659,7 +659,8 @@ var vm = new Vue({
                     _this.initWebSocket();
                 }
             }).catch(function (err) {
-
+                console.log("获取登录用户失败", err);
+                _this.$message("获取登录用户失败");
             });
         },
         init: function () {
