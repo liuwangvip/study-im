@@ -99,5 +99,19 @@
             <appender-ref ref="FILE-ERROR" />
         </root>
     </springProfile>
+    <!--本地环境:打印控制台-->
+    <springProfile name="local">
+        <logger name="com.isoler.studyim.business" additivity="false">
+            <appender-ref ref="stdout" />
+            <appender-ref ref="FILE-JDBC" />
+            <!--debug 控制输出方法名，appender中filter过滤warn级别以下的日志 -->
+            <level value="debug" />
+        </logger>
+        <root level="info">
+            <appender-ref ref="stdout" />
+            <appender-ref ref="FILE" />
+            <appender-ref ref="FILE-ERROR" />
+        </root>
+    </springProfile>
 
 </configuration>
