@@ -49,7 +49,7 @@ spring:
           password: 123456
           username: sa
           driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://43.138.159.130:5432/isoler
+          url: jdbc:postgresql://127.0.0.1:5432/isoler
           # 连接池的名称
           pool-name: db-iosler-ds
           druid:
@@ -59,9 +59,9 @@ spring:
 
 # minio 存储配置
 minio:
-  endpoint: http://43.138.159.130:8001
+  endpoint: http://127.0.0.1:8001
   accessKey: admin
-  secretKey: 12345678Aa
+  secretKey: 123456
   storageId: s3
   bucket-name: im-bucket
   pre-path: storage
