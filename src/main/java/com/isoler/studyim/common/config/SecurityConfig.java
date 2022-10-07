@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.annotation.Resource;
 
@@ -47,8 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        //禁用跨域保护
-        http.csrf().disable();
+
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/user/register", "/error")
                 .permitAll()
@@ -90,7 +90,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMeCookieName("rememberMe")
                 //默认室2周不用登录
                 .tokenValiditySeconds(7 * 24 * 60 * 60)
-        ;
+                .and()
+                //禁用跨域保护
+                .csrf()
+                .disable()
+                //防止重复登录，设置最多同时只有一个会话
+                .sessionManagement()
+                .maximumSessions(1);
 
     }
 
@@ -98,6 +104,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity webSecurity) throws Exception {
         //忽略静态资源
         webSecurity.ignoring().antMatchers("/js/**", "/css/**", "/img/**");
+    }
+
+    /**
+     * 防止重复登录配置
+     *
+     * @return
+     */
+    @Bean
+    HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
 }
