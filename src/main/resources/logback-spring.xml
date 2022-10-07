@@ -66,7 +66,7 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.isoler.template" additivity="false">
+    <logger name="com.isoler.studyim" additivity="false">
         <level value="info" />
         <appender-ref ref="FILE" />
     </logger>
