@@ -68,7 +68,6 @@ body {
 }
 
 .fd-head .fd-head-tail {
-    width: 120px;
     display: flex;
     justify-content: flex-start;
     flex-flow: row nowrap;
