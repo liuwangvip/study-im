@@ -4,7 +4,8 @@
     <meta name="viewport"
           content="width=device-width, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="/css/element/element.css">
+    <#assign rootPath=springMacroRequestContext.contextPath />
+    <link rel="stylesheet" href="${rootPath}/css/element/element.css">
     <title>WeChat</title>
     <style>
         html, body {
@@ -183,7 +184,7 @@
         </el-header>
         <el-main class="fd-main">
             <div style="text-align: center">
-                <img class="fd-tip-img" src="/img/error/tip-img.png" alt="错误提示">
+                <img class="fd-tip-img" src="${rootPath}/img/error/tip-img.png" alt="错误提示">
                 <span class="fd-error-code">
                     <#if status??>
                         ${status}
@@ -213,13 +214,13 @@
             </div>
         </el-main>
         <el-footer class="fd-footer" height="auto">
-                Copyright &copy; 2020-2022@ISOLER
+            Copyright &copy; 2020-2022@ISOLER
         </el-footer>
     </el-container>
 </div>
 </body>
 <!-- import Vue before Element -->
-<script src="/js/vue/vue.min.js"></script>
+<script src="${rootPath}/js/vue/vue.min.js"></script>
 <!-- import JavaScript -->
-<script src="/js/element/element.js"></script>
+<script src="${rootPath}/js/element/element.js"></script>
 </html>
