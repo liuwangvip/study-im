@@ -50,6 +50,6 @@ public class FileStorage extends BaseEntityExt {
 
     @ApiModelProperty(value = "文件排序号")
     @TableField("n_order")
-    private Integer order;
+    private Integer xh;
 
 }

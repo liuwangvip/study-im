@@ -12,7 +12,7 @@
         <result column="dt_expire_time" property="expireTime" />
         <result column="dt_create_time" property="createTime" />
         <result column="dt_update_time" property="updateTime" />
-        <result column="n_order" property="order" />
+        <result column="n_order" property="xh" />
         <result column="c_creator_id" property="creatorId" />
         <result column="c_updator_id" property="updatorId" />
     </resultMap>

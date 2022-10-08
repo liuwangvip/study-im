@@ -82,6 +82,7 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
             log.error("文件上传失败", e);
             throw new RuntimeException("文件上传失败,获取文件流失败");
         } catch (Exception e) {
+            log.error("文件上传失败", e);
             throw new RuntimeException("文件上传失败,请联系管理员");
         } finally {
             if (path != null) {
@@ -124,6 +125,7 @@ public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileS
             log.error("文件上传失败", e);
             throw new RuntimeException("文件上传失败,获取文件流失败");
         } catch (Exception e) {
+            log.error("文件上传失败",e);
             throw new RuntimeException("文件上传失败,请联系管理员");
         }
     }

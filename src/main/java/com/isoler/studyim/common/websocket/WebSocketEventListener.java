@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -65,6 +66,7 @@ public class WebSocketEventListener {
         sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.OFF_LINE.getStatus());
     }
 
+
     /**
      * 上/下线通知
      *
@@ -110,5 +112,10 @@ public class WebSocketEventListener {
         return null;
     }
 
+    @Scheduled(cron = "0 */10 * * * ?")
+    public void correctOnlineCount() {
+        final long l = sysUserService.countOnlineUser(OnlineStatusEnum.OFF_LINE.getStatus());
+        onlineCount.getAndSet(l);
+    }
 
 }
