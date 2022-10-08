@@ -600,6 +600,70 @@ var vm = new Vue({
             }, 500);
         },
         /**
+         * 处理粘贴
+         * @param event
+         */
+        handlePaste: function (event) {
+            var _this = this;
+            // 读取图片
+            let items = event.clipboardData && event.clipboardData.items;
+            let file = null;
+            if (items && items.length) {
+                // 检索剪切板items
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        file = items[i].getAsFile();
+                        break;
+                    }
+                }
+            }
+            if (file == null) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onloadend = function (event) {
+                var imgBase64 = event.target.result;
+                if (imgBase64 == 'data:' || imgBase64 == "") {
+                    return;
+                }
+                var dataURI = imgBase64;
+                var blob = _this.dataURItoBlob(dataURI);
+                _this.uploadFile(blob, "截图.png");
+            };
+            reader.readAsDataURL(file);
+        },
+        /**
+         * base64  to blob二进制
+         * @param dataURI
+         * @returns {Blob}
+         */
+        dataURItoBlob: function (dataURI) {
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; // mime类型
+            var byteString = atob(dataURI.split(',')[1]); //base64 解码
+            var arrayBuffer = new ArrayBuffer(byteString.length); //创建缓冲数组
+            var intArray = new Uint8Array(arrayBuffer); //创建视图
+            for (var i = 0; i < byteString.length; i++) {
+                intArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([intArray], {type: mimeString});
+        },
+
+        /**
+         * 上传文件
+         * @param file
+         */
+        uploadFile: function (file, fileName) {
+            var formData = new FormData();
+            formData.append('file', file, fileName);
+            var _this = this;
+            axios.post("file", formData, {headers: {"Content-Type": "multipart/form-data"}}).then(function (res) {
+                _this.$message("文件上传成功");
+                _this.showChatSendFile(res.data);
+            }).catch(function (e) {
+                _this.$message("文件上传失败");
+            });
+        },
+        /**
          * 发送websocket消息
          */
         sendMessage: function () {

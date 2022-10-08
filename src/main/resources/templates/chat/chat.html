@@ -298,7 +298,9 @@
                             </div>
                             <div class="fd-send-file">
                                 <li v-show="chat.sendFile.show" class="el-upload-list__item is-success">
-                                    <a class="el-upload-list__item-name"><i class="el-icon-document"></i>
+                                    <a class="el-upload-list__item-name" @click="previewFile(chat.sendFile)">
+                                        <i class="el-icon-view" v-if="canPreviewFile(chat.sendFile.fileName)"></i>
+                                        <i class="el-icon-document" v-else ></i>
                                         {{chat.sendFile.fileName}}
                                     </a>
                                     <label class="el-upload-list__item-status-label"><i
@@ -311,6 +313,7 @@
                                 <el-input placeholder="善语结善缘，恶言伤人心 ^_^" :clearable="true" autofocus="true"
                                           maxlength="5000"
                                           show-word-limit
+                                          @paste.native="handlePaste"
                                           @keyup.ctrl.enter.native="sendMessage"
                                           type="textarea" :autosize="{ minRows: 3, maxRows: 3}"
                                           v-model="chat.msgContent" class="input-with-select">
@@ -466,5 +469,5 @@
 <script src="js/websocket/stomp.min.js"></script>
 <script src="js/moment/moment.js"></script>
 <script src="js/axios/axios.min.js"></script>
-<script src="js/chat/chat.min.js"></script>
+<script src="js/chat/chat.js"></script>
 </html>
