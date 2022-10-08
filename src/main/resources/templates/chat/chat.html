@@ -6,7 +6,7 @@
     <!-- 引入样式 -->
     <link rel="stylesheet" href="css/element/element.css">
     <link rel="stylesheet" href="css/chat/chat.css"/>
-
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
 <div id="app">
@@ -41,7 +41,7 @@
             <el-aside class="fd-left-nav" width="auto">
                 <div class="fd-nav-container">
                     <el-row class="fd-nav-container-item" @click.native="changeNav('chatRoom')">
-                        <el-badge :value="200" :max="99" class="item">
+                        <el-badge :value="0" :max="99" :hidden="true" class="item">
                             <el-button :class="{active:navType == 'chatRoom'}" type="info" icon="el-icon-chat-round"
                                        circle></el-button>
                         </el-badge>
@@ -79,12 +79,12 @@
                             <template v-for="item in roomList.data">
                                 <div class="fd-left-ul-item">
                                     <div>
-                                        <el-badge :value="200" :max="99" class="item">
+                                        <el-badge :value="chat.unread" :max="99" :hidden="chat.unread<1" class="item">
                                             <el-avatar style="line-height: 40px;" size="medium"
                                                        :src="item.src" fit="none"></el-avatar>
                                         </el-badge>
                                     </div>
-                                    <div class="fd-left-ul-item-name">
+                                    <div class="fd-left-ul-item-name" @mouseover="clearUnread">
                                         {{item.name}}
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@
                         <template v-for="item in userList.all">
                             <div class="fd-left-ul-item">
                                 <div>
-                                    <el-badge :value="200" :max="99" class="item">
+                                    <el-badge :value="0" :max="99" :hidden="true" class="item">
                                         <el-avatar style="line-height: 40px;" size="medium"
                                                    src="img/chat/user-blue.png" fit="none"></el-avatar>
                                     </el-badge>
@@ -177,7 +177,7 @@
                                                 <span class="fd-chat-message-title-date">{{message.createTime}}</span>
                                             </div>
                                             <div class="fd-chat-message-content-text">
-                                                {{message.content}}
+                                                <p style="white-space:pre-line;margin: 0px">{{message.content}}</p>
                                             </div>
                                             <div class="fd-chat-message-content-file"
                                                  v-if="message.fileId!='' && message.fileId!=null">
@@ -311,6 +311,7 @@
                                 <el-input placeholder="善语结善缘，恶言伤人心 ^_^" :clearable="true" autofocus="true"
                                           maxlength="5000"
                                           show-word-limit
+                                          @keyup.ctrl.enter.native="sendMessage"
                                           type="textarea" :autosize="{ minRows: 3, maxRows: 3}"
                                           v-model="chat.msgContent" class="input-with-select">
                                 </el-input>
@@ -410,7 +411,7 @@
                                     <span class="fd-chat-message-title-date">{{message.createTime}}</span>
                                 </div>
                                 <div class="fd-chat-message-content-text">
-                                    {{message.content}}
+                                    <p style="white-space:pre-line;margin: 0px">{{message.content}}</p>
                                 </div>
                                 <div class="fd-chat-message-content-file"
                                      v-if="message.fileId!='' && message.fileId!=null">
@@ -465,5 +466,5 @@
 <script src="js/websocket/stomp.min.js"></script>
 <script src="js/moment/moment.js"></script>
 <script src="js/axios/axios.min.js"></script>
-<script src="js/chat/chat.js"></script>
+<script src="js/chat/chat.min.js"></script>
 </html>

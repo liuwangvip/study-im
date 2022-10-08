@@ -48,6 +48,7 @@ var vm = new Vue({
             headers: {},
             connectStatus: "",
             chat: {
+                unread: 0,
                 loading: false,
                 loadingText: "",
                 preview: {
@@ -195,6 +196,12 @@ var vm = new Vue({
          */
         addChatRoom: function () {
             this.$message('开发中。。。');
+        },
+        /**
+         * 清除未读消息
+         */
+        clearUnread: function () {
+            this.chat.unread = 0;
         },
         /**
          * 获取聊天室列表
@@ -567,6 +574,9 @@ var vm = new Vue({
          */
         onMessageReceived: function (payload) {
             let message = JSON.parse(payload.body);
+            if (message && message.type == '1') {
+                this.chat.unread = this.chat.unread + 1;
+            }
             this.chat.message.data.push(message);
             this.scrollToChatMessageBottom();
         },

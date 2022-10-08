@@ -114,7 +114,7 @@ public class WebSocketEventListener {
 
     @Scheduled(cron = "0 */10 * * * ?")
     public void correctOnlineCount() {
-        final long l = sysUserService.countOnlineUser(OnlineStatusEnum.OFF_LINE.getStatus());
+        final long l = sysUserService.countOnlineUser(OnlineStatusEnum.ON_LINE.getStatus());
         onlineCount.getAndSet(l);
     }
 
