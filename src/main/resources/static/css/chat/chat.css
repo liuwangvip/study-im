@@ -368,11 +368,13 @@ body {
     padding: 0px 0px 5px 0px;
     margin: 0;
     list-style: none;
+    cursor: pointer;
 }
 
 .fd-chat-container .fd-chat-footer .fd-chat-footer-send .fd-send-file .el-upload-list__item:first-child {
     font-size: 12px !important;
     margin-top: 0px !important;
+    cursor: pointer !important;
 }
 
 .fd-chat-container .fd-chat-footer .fd-chat-footer-send .fd-chat-footer-send-tool {
