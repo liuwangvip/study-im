@@ -2,7 +2,7 @@
 server:
   port: 8001
   servlet:
-    context-path: /study-nav
+    context-path: /study-im
 
 spring:
   servlet:
