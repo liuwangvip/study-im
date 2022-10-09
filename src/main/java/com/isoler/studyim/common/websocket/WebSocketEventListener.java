@@ -3,6 +3,7 @@ package com.isoler.studyim.common.websocket;
 import com.isoler.studyim.business.chatmessage.model.bean.ChatMessage;
 import com.isoler.studyim.business.chatmessage.model.eo.MessageTypeEnum;
 import com.isoler.studyim.business.user.model.bean.SysUser;
+import com.isoler.studyim.business.user.model.dto.UserInfoDto;
 import com.isoler.studyim.business.user.model.eo.OnlineStatusEnum;
 import com.isoler.studyim.business.user.service.ISysUserService;
 import com.isoler.studyim.common.util.DateUtil;
@@ -19,7 +20,9 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import javax.annotation.Resource;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -31,7 +34,8 @@ public class WebSocketEventListener {
     public static final String SUPER_ADMIN_SENDER_ID = "superAdmin";
     public static final String SUPER_ADMIN_SENDER_NAME = "超级管理员";
 
-    public AtomicLong onlineCount = new AtomicLong(0);
+
+    private ConcurrentHashMap<String, String> onlineUser = new ConcurrentHashMap<>(100);
 
     @Resource
     private SimpMessageSendingOperations messagingTemplate;
@@ -47,7 +51,7 @@ public class WebSocketEventListener {
         if (sysUser == null) {
             return;
         }
-        onlineCount.getAndIncrement();
+        onlineUser.put(sysUser.getId(), sysUser.getUsername());
         sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.ON_LINE.getStatus());
     }
 
@@ -60,9 +64,10 @@ public class WebSocketEventListener {
         if (sysUser == null) {
             return;
         }
-        onlineCount.getAndDecrement();
-        noticeOnlineCount();
-        noticeOnline(sysUser, MessageTypeEnum.NOTICE_OFFLINE, true);
+        if (onlineUser.remove(sysUser.getId()) != null) {
+            noticeOnlineCount();
+            noticeOnline(sysUser, MessageTypeEnum.NOTICE_OFFLINE, true);
+        }
         sysUserService.updateOnlineStatus(sysUser.getId(), OnlineStatusEnum.OFF_LINE.getStatus());
     }
 
@@ -91,7 +96,7 @@ public class WebSocketEventListener {
      * 发送在线人数消息
      */
     public void noticeOnlineCount() {
-        messagingTemplate.convertAndSend("/topic/online", onlineCount.get());
+        messagingTemplate.convertAndSend("/topic/online", onlineUser.size());
     }
 
     /**
@@ -112,10 +117,16 @@ public class WebSocketEventListener {
         return null;
     }
 
+    /**
+     * 矫正在线人数
+     */
     @Scheduled(cron = "0 */10 * * * ?")
     public void correctOnlineCount() {
-        final long l = sysUserService.countOnlineUser(OnlineStatusEnum.ON_LINE.getStatus());
-        onlineCount.getAndSet(l);
+        UserInfoDto dto = new UserInfoDto().setOnlineStatus(OnlineStatusEnum.ON_LINE.getStatus());
+        Optional.ofNullable(sysUserService.listUser(dto)).orElse(Collections.emptyList())
+                .stream().forEach(param -> {
+                    onlineUser.put(param.getId(), param.getUsername());
+                });
     }
 
 }
