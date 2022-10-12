@@ -181,27 +181,37 @@
                                             </div>
                                             <div class="fd-chat-message-content-file"
                                                  v-if="message.fileId!='' && message.fileId!=null">
-                                                <div class="fd-chat-message-content-file-item">
-                                                    <i class="el-icon-document"></i>
-                                                    {{message.fileName}}
+                                                <div class="file-pic" v-if="canPreviewFile(message.fileName)" @click="previewFile(message)">
+                                                    <el-image style="max-width: 400px;width: fit-content; max-height: 200px" fit="contain" :src="'file/'+message.fileId">
+                                                        <div slot="placeholder" class="image-slot">
+                                                            加载中<span class="dot">...</span>
+                                                        </div>
+                                                    </el-image>
                                                 </div>
-                                                <div class="fd-chat-message-content-file-item"
-                                                     v-if="canPreviewFile(message.fileName)">
-                                                    <el-tooltip class="item" effect="dark" content="预览"
-                                                                placement="bottom-end">
-                                                        <el-link :underline="false"
-                                                                 @click="previewFile(message)"><i
-                                                                    class="el-icon-view el-icon--right"></i></el-link>
-                                                    </el-tooltip>
+                                                <div class="file-normal" v-else>
+                                                    <div class="fd-chat-message-content-file-item">
+                                                        <i class="el-icon-document"></i>
+                                                        {{message.fileName}}
+                                                    </div>
+                                                    <div class="fd-chat-message-content-file-item"
+                                                         v-if="canPreviewFile(message.fileName)">
+                                                        <el-tooltip class="item" effect="dark" content="预览"
+                                                                    placement="bottom-end">
+                                                            <el-link :underline="false"
+                                                                     @click="previewFile(message)"><i
+                                                                        class="el-icon-view el-icon--right"></i></el-link>
+                                                        </el-tooltip>
+                                                    </div>
+                                                    <div class="fd-chat-message-content-file-item">
+                                                        <el-tooltip class="item" effect="dark" content="下载"
+                                                                    placement="bottom-end">
+                                                            <el-link :underline="false" :href="'file/'+message.fileId"><i
+                                                                        class="el-icon-download el-icon--right"></i>
+                                                            </el-link>
+                                                        </el-tooltip>
+                                                    </div>
                                                 </div>
-                                                <div class="fd-chat-message-content-file-item">
-                                                    <el-tooltip class="item" effect="dark" content="下载"
-                                                                placement="bottom-end">
-                                                        <el-link :underline="false" :href="'file/'+message.fileId"><i
-                                                                    class="el-icon-download el-icon--right"></i>
-                                                        </el-link>
-                                                    </el-tooltip>
-                                                </div>
+
                                             </div>
                                         </div>
                                     </div>

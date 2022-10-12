@@ -17,7 +17,7 @@ public class PageController {
      */
     @GetMapping({"", "index"})
     public String getIndexPage() {
-        return "index";
+        return "im";
     }
 
 
