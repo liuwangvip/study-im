@@ -145,19 +145,30 @@
                             <el-alert v-if="connectStatus=='4'" title="连接断开" show-icon center type="warn"
                                       :closable="false"></el-alert>
                         </div>
-                        <div class="fd-chat-more" @click="showMore">
-                            <svg t="1664568892984" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                                 xmlns="http://www.w3.org/2000/svg" p-id="12289" width="16" height="16">
-                                <path d="M197.844997 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM512 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM826.155003 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0Z"
-                                      p-id="12290"></path>
-                            </svg>
+                        <div class="fd-chat-header-right">
+                            <div style="padding-right: 20px;">
+                                <el-switch
+                                        style="display: block"
+                                        active-text="上线提醒"
+                                        v-model="chat.openNotice"
+                                        active-color="#13ce66"
+                                        inactive-color="#3c3f41">
+                                </el-switch>
+                            </div>
+                            <div class="fd-chat-more" @click="showMore">
+                                <svg t="1664568892984" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                     xmlns="http://www.w3.org/2000/svg" p-id="12289" width="16" height="16">
+                                    <path d="M197.844997 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM512 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0ZM826.155003 512m-74.694189 0a72.993 72.993 0 1 0 149.388379 0 72.993 72.993 0 1 0-149.388379 0Z"
+                                          p-id="12290"></path>
+                                </svg>
+                            </div>
                         </div>
                     </el-header>
                     <el-main style="height: calc(100vh - 400px);">
                         <div class="fd-chat-main" ref="fd_chat_main">
                             <div class="fd-chat-content-item" v-for="(message,index) in chat.message.data" :key="index">
                                 <div class="fd-chat-notice" v-if="message.type == '2.1'||message.type == '2.2'">
-                                    <div class="chat-notice-text">
+                                    <div class="chat-notice-text" v-if="chat.openNotice">
                                         <span>{{message.content}}</span>
                                         <span style="padding-left: 5px">{{message.createTime}}</span>
                                     </div>
@@ -479,5 +490,5 @@
 <script src="js/websocket/stomp.min.js"></script>
 <script src="js/moment/moment.js"></script>
 <script src="js/axios/axios.min.js"></script>
-<script src="js/chat/chat.min.js"></script>
+<script src="js/chat/chat.js"></script>
 </html>

@@ -48,6 +48,7 @@ var vm = new Vue({
             headers: {},
             connectStatus: "",
             chat: {
+                openNotice: false,
                 unread: 0,
                 loading: false,
                 loadingText: "",
