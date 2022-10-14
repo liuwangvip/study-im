@@ -2,6 +2,7 @@ var vm = new Vue({
     el: '#app',
     data: function () {
         return {
+            notification: null,
             /**
              * 控制显示
              */
@@ -402,7 +403,7 @@ var vm = new Vue({
                 searchText: this.chat.historyMessage.searchText
             };
             axios.post("chat/page", param).then(function (res) {
-                _this.chat.historyMessage.data = res.data.result.records;
+                _this.chat.historyMessage.data = res.data.result.records.reverse();
                 _this.chat.historyMessage.total = res.data.result.total;
             }).catch(function (e) {
                 console.log(e);
@@ -426,7 +427,7 @@ var vm = new Vue({
             };
             var _this = this;
             axios.post("chat/page", param).then(function (res) {
-                _this.chat.historyMessage.data = res.data.result.records;
+                _this.chat.historyMessage.data = res.data.result.records.reverse();
                 _this.chat.historyMessage.total = res.data.result.total;
             }).catch(function (e) {
                 console.log(e);
@@ -575,11 +576,16 @@ var vm = new Vue({
          */
         onMessageReceived: function (payload) {
             let message = JSON.parse(payload.body);
+            if (message && !this.chat.openNotice && (message.type == '2.1' || message.type == '2.2')) {
+                this.scrollToChatMessageBottom();
+                return;
+            }
             if (message && message.type == '1') {
                 this.chat.unread = this.chat.unread + 1;
             }
             this.chat.message.data.push(message);
             this.scrollToChatMessageBottom();
+            this.noticeMessage();
         },
         /**
          * 接收服务器在线消息
@@ -595,10 +601,13 @@ var vm = new Vue({
         scrollToChatMessageBottom: function () {
             var _this = this;
             this.$nextTick(() => {
+                if (_this.$refs.fd_chat_main.scrollHeight == _this.$refs.fd_chat_main.scrollTop) {
+                    return;
+                }
                 if (_this.$refs.fd_chat_main.scrollHeight) {
                     _this.$refs.fd_chat_main.scrollTop = _this.$refs.fd_chat_main.scrollHeight
                 }
-            }, 500);
+            }, 400);
         },
         /**
          * 处理粘贴
@@ -729,6 +738,7 @@ var vm = new Vue({
             axios.get("user/name").then(function (res) {
                 if (res.data.success) {
                     console.log("获取登录用户成功", res.data.result.username);
+                    _this.addWaterMark(res.data.result.username);
                     _this.visible.userDialog = false;
                     _this.currentUser = res.data.result;
                     _this.initWebSocket();
@@ -736,6 +746,66 @@ var vm = new Vue({
             }).catch(function (err) {
                 console.log("获取登录用户失败", err);
                 _this.$message("获取登录用户失败");
+            });
+        },
+        /**
+         * 添加水印
+         * @param content
+         */
+        addWaterMark: function (content) {
+            var container = document.body;
+            var width = '200px';
+            var height = '150px';
+            var textAlign = 'center';
+            var textBaseline = 'top';
+            var font = "16px Microsoft Yahei";
+            var fillStyle = 'rgba(89, 91, 93,0.05)';
+            // var fillStyle = 'rgba(184, 184, 184, 0.8)';
+            var rotate = '30';
+            var zIndex = 1000;
+            var canvas = document.createElement('canvas');
+
+            canvas.setAttribute('width', width);
+            canvas.setAttribute('height', height);
+            var ctx = canvas.getContext("2d");
+
+            ctx.textAlign = textAlign;
+            ctx.textBaseline = textBaseline;
+            ctx.font = font;
+            ctx.fillStyle = fillStyle;
+            ctx.rotate(Math.PI / 180 * rotate);
+            ctx.fillText(content, parseFloat(width) / 2, parseFloat(height) / 2);
+
+            var base64Url = canvas.toDataURL();
+            const watermarkDiv = document.createElement("div");
+            watermarkDiv.setAttribute('style',
+                `position:absolute;
+                  top:0;
+                  left:0;
+                  width:100%;
+                  height:100%;
+                  z-index:${zIndex};
+                  pointer-events:none;
+                  background-repeat:repeat;
+                  background-image:url('${base64Url}')`
+            );
+            container.style.position = 'relative';
+            container.insertBefore(watermarkDiv, container.firstChild);
+        },
+        noticeMessage: function () {
+            var unread = this.chat.unread;
+            var _this = this;
+            Notification.requestPermission().then(function (permission) {
+                if (permission === 'granted') {
+                    if (_this.notification && _this.notification.close) {
+                        _this.notification.close();
+                    }
+                    _this.notification = new Notification('消息提醒', {
+                        body: `您有${unread}条未读消息`
+                    });
+                } else if (permission === 'denied') {
+                    console.log('用户拒绝通知');
+                }
             });
         },
         init: function () {
@@ -748,6 +818,7 @@ var vm = new Vue({
     },
     mounted: function () {
         this.init();
+
     }
     ,
     beforeDestroy: function () {
